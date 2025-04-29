@@ -12,7 +12,7 @@ body {
 .comptableService {
   padding: 30px;
   max-width: 1200px;
-  margin-left: 300px;
+  margin-left:auto;
 
   background: #fff;
   border-radius: 14px;

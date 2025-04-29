@@ -10,6 +10,7 @@ const Login = () => {
   const [role, setRole] = useState("employer");
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
 
   // Liste des comptes spéciaux avec leurs redirections
@@ -17,7 +18,7 @@ const Login = () => {
     "RoyelStayEmp@gmail.com": {
       password: "RoyelstayEmp##",
       role: "employer",
-      redirect: "/employee",  // Modifié pour correspondre à la route dans App.js
+      redirect: "/employee",
       message: "Connexion employé réussie !"
     },
     "RoyelstayAd@gmail.com": {
@@ -88,7 +89,7 @@ const Login = () => {
             navigate("/admin-dashboard");
             break;
           case 'employer':
-            navigate("/employee");  // Route corrigée pour correspondre à App.js
+            navigate("/employee");
             break;
           case 'user':
             navigate("/homeScreen");
@@ -125,10 +126,23 @@ const Login = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                style={styles.inputField}
+                style={{
+                  ...styles.inputField,
+                  ...(isHovered && styles.inputFieldHover),
+                }}
                 disabled={isLoading}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                onFocus={(e) => {
+                  e.target.style.border = styles.inputFieldFocus.border;
+                  e.target.style.boxShadow = styles.inputFieldFocus.boxShadow;
+                }}
+                onBlur={(e) => {
+                  e.target.style.border = "2px solid #ccc";
+                  e.target.style.boxShadow = "none";
+                }}
               />
-              {errors.email && <span style={styles.error}>{errors.email}</span>}
+              {errors.email && <span style={styles.errorMessage}>{errors.email}</span>}
             </div>
 
             {/* Champ Mot de passe */}
@@ -138,10 +152,23 @@ const Login = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                style={styles.inputField}
+                style={{
+                  ...styles.inputField,
+                  ...(isHovered && styles.inputFieldHover),
+                }}
                 disabled={isLoading}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                onFocus={(e) => {
+                  e.target.style.border = styles.inputFieldFocus.border;
+                  e.target.style.boxShadow = styles.inputFieldFocus.boxShadow;
+                }}
+                onBlur={(e) => {
+                  e.target.style.border = "2px solid #ccc";
+                  e.target.style.boxShadow = "none";
+                }}
               />
-              {errors.password && <span style={styles.error}>{errors.password}</span>}
+              {errors.password && <span style={styles.errorMessage}>{errors.password}</span>}
             </div>
 
             {/* Champ Rôle */}
@@ -150,8 +177,21 @@ const Login = () => {
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                style={styles.inputField}
+                style={{
+                  ...styles.inputField,
+                  ...(isHovered && styles.inputFieldHover),
+                }}
                 disabled={isSpecialAccount || isLoading}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                onFocus={(e) => {
+                  e.target.style.border = styles.inputFieldFocus.border;
+                  e.target.style.boxShadow = styles.inputFieldFocus.boxShadow;
+                }}
+                onBlur={(e) => {
+                  e.target.style.border = "2px solid #ccc";
+                  e.target.style.boxShadow = "none";
+                }}
               >
                 <option value="user">Utilisateur</option>
                 <option value="employer">Employé</option>
@@ -168,16 +208,19 @@ const Login = () => {
             <button
               type="submit"
               style={{
-                ...styles.button,
+                ...styles.submitButton,
+                ...(isHovered && styles.submitButtonHover),
                 ...(isLoading && styles.buttonDisabled)
               }}
               disabled={isLoading}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
             >
               {isLoading ? "Connexion..." : "Se connecter"}
             </button>
           </form>
 
-          <p style={styles.linkText}>
+          <p style={styles.linkContainer}>
             Pas de compte ? <Link to="/signup" style={styles.link}>S'inscrire</Link>
           </p>
         </div>
@@ -205,13 +248,13 @@ const styles = {
     height: "100%",
     backgroundColor: "rgba(0, 0, 0, 0)",
   },
- loginContainer: {
+  loginContainer: {
     width: "360px",
     background: "linear-gradient(135deg, rgba(255, 255, 255, 0.37), rgba(255, 255, 255, 0.22))",
     backdropFilter: "blur(10px)",
     padding: "30px",
     borderRadius: "15px",
-    boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)",
+    boxShadow: "0px 8px 20px rgb(0, 0, 0)",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -225,11 +268,11 @@ const styles = {
     textTransform: "uppercase",
     letterSpacing: "2px",
   },
-  form: {
+  formGroup: {
     width: "100%",
+    marginBottom: "15px",
   },
   label: {
-    fontSize: "14px",
     fontWeight: "bold",
     marginBottom: "5px",
     color: "rgb(8, 8, 8)",
@@ -244,15 +287,12 @@ const styles = {
     transition: "all 0.3s ease-in-out",
     background: "#ffffff",
     color: "#000",
-    marginBottom: "15px",
+  },
+  inputFieldHover: {
+    boxShadow: "0px 0px 10px rgba(255, 215, 0, 0.5)",
   },
   inputFieldFocus: {
     boxShadow: "0px 0px 10px rgba(255, 215, 0, 0.5)",
-  },
-  errorMessage: {
-    color: "red",
-    fontSize: "14px",
-    marginTop: "5px",
   },
   submitButton: {
     width: "100%",
@@ -267,16 +307,33 @@ const styles = {
     transition: "all 0.3s ease-in-out",
     marginTop: "15px",
   },
-  toggleLink: {
+  submitButtonHover: {
+    backgroundColor: "rgb(100, 100, 100)",
+  },
+  buttonDisabled: {
+    opacity: 0.7,
+    cursor: "not-allowed",
+  },
+  linkContainer: {
     marginTop: "15px",
     textAlign: "center",
     color: "#000",
-    fontSize: "14px",
   },
   link: {
     color: "rgb(8, 8, 8)",
     textDecoration: "underline",
     fontWeight: "bold",
+  },
+  errorMessage: {
+    color: "red",
+    fontSize: "14px",
+    marginTop: "5px",
+  },
+  specialNote: {
+    fontSize: "12px",
+    color: "#000",
+    marginBottom: "10px",
+    fontStyle: "italic",
   },
 };
 

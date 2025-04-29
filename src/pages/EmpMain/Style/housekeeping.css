@@ -99,7 +99,7 @@ body {
 /* Styles pour les sections */
 .section {
   margin-bottom: 40px;
-  margin-left: 100px;
+  margin-left: auto;
   padding: 20px;
   background: #fff;
   border-radius: 8px;
