@@ -1,0 +1,328 @@
+.header {
+    background: #333;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    animation: backgroundAnimation 20s ease-in-out infinite; /* Animation de fond */
+    }
+    
+    @keyframes backgroundAnimation {
+    0% {
+    background-position: 0% 50%;
+    }
+    50% {
+    background-position: 100% 50%;
+    }
+    100% {
+    background-position: 0% 50%;
+    }
+    }
+    
+    .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    max-width: 1400px; /* Augmentation légère pour écrans plus larges */
+    margin: 0 auto;
+    }
+    
+    .logo img {
+    height: 50px; /* Taille augmentée pour un impact visuel plus fort */
+    margin-right: 15px;
+    border-radius: 50%;
+    transition: transform 0.5s ease, filter 0.5s ease; /* Transition plus fluide */
+    }
+    
+    .logo a {
+    font-family: 'Luxurious Roman', serif;
+    font-size: 2.2rem; /* Taille légèrement augmentée */
+    font-weight: bold;
+    color: #4A90E2; /* Couleur principale */
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: color 0.5s ease, text-shadow 0.5s ease; /* Transition plus fluide */
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3); /* Ombre portée plus douce */
+    }
+    
+    /* Animation pour le texte ROYELSTAY */
+    .logo a:hover {
+    animation: hoverAnimation 0.7s ease-in-out;
+    color: #FF6F61; /* Changement de couleur au survol */
+    text-shadow: 2px 2px 12px rgba(255, 111, 97, 0.6); /* Ombre portée plus prononcée */
+    }
+    
+    @keyframes hoverAnimation {
+    0% {
+    transform: scale(1);
+    }
+    50% {
+    transform: scale(1.15); /* Zoom légèrement augmenté */
+    }
+    100% {
+    transform: scale(1);
+    }
+    }
+    
+    /* Animation pour le logo */
+    .logo img:hover {
+    animation: logoHoverAnimation 0.7s ease-in-out;
+    filter: brightness(1.4); /* Légère augmentation de la luminosité */
+    }
+    
+    @keyframes logoHoverAnimation {
+    0% {
+    transform: rotate(0deg);
+    }
+    50% {
+    transform: rotate(20deg); /* Rotation légèrement augmentée */
+    }
+    100% {
+    transform: rotate(0deg);
+    }
+    }
+    
+    .nav-menu ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    }
+    
+    .nav-menu li {
+    margin: 0 1.2rem; /* Espacement légèrement augmenté */
+    }
+    
+    .nav-menu a {
+    text-decoration: none;
+    color: #FFFFFF; /* Couleur du texte */
+    font-weight: 600; /* Poids de police légèrement augmenté */
+    transition: all 0.5s ease; /* Transition plus fluide */
+    padding: 0.8rem 2rem; /* Espacement légèrement augmenté */
+    border-radius: 35px; /* Coins arrondis plus doux */
+    display: flex;
+    align-items: center;
+    background-color: linear-gradient(135deg, #8B4513, #A0522D); /* Couleur de fond du bouton */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Ombre portée plus douce */
+    }
+    
+    .nav-menu a i {
+    margin-right: 0.8rem; /* Espacement légèrement augmenté */
+    }
+    
+    .nav-menu a:hover {
+    color: #FFFFFF; /* Couleur du texte au survol */
+    background-color: linear-gradient(135deg, #8B4513, #A0522D); /* Changement de couleur de fond au survol */
+    transform: translateY(-4px); /* Effet de levée plus prononcé */
+    box-shadow: 0 10px 16px rgba(255, 111, 97, 0.4); /* Ombre portée plus douce */
+    }
+    
+    .nav-menu a:active {
+    transform: translateY(0); /* Effet d'enfoncement */
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2); /* Ombre portée réduite */
+    }
+    
+    .mobile-menu-toggle {
+    display: none;
+    font-size: 2rem; /* Taille légèrement augmentée */
+    cursor: pointer;
+    color: #4A90E2; /* Couleur principale */
+    transition: transform 0.4s ease, color 0.4s ease; /* Transition fluide */
+    }
+    
+    .mobile-menu-toggle:hover {
+    transform: scale(1.2); /* Effet de zoom au survol */
+    color: #cf9e1638; /* Changement de couleur au survol */
+    }
+    
+    @media (max-width: 768px) {
+    .nav-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #1E1E2F; /* Couleur de fond */
+    padding: 2rem; /* Espacement légèrement augmenté */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .nav-menu.active {
+    display: block;
+    }
+    
+    .nav-menu ul {
+    flex-direction: column;
+    }
+    
+    .nav-menu li {
+    margin: 1rem 0; /* Espacement légèrement augmenté */
+    }
+    
+    .mobile-menu-toggle {
+    display: block;
+    }
+    }
+    /* Réduction de la barre d'en-tête lors du défilement */
+    .header.scrolled {
+    padding: 0.5rem 2rem; /* Réduction de la hauteur */
+    transition: all 0.3s ease;
+    }
+    
+    /* Mode sombre */
+    .dark-mode .header {
+    background: linear-gradient(135deg, #121212, #1e1e1e);
+    color: #ffffff;
+    }
+    
+    .dark-mode .nav-menu a {
+    color: #ffffff;
+    }
+    
+    .dark-mode .nav-menu a:hover {
+    background-color:#ad871d;
+    }
+    
+    /* Animation pour le bouton Mode Sombre */
+    .dark-mode-toggle {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    }
+    
+    .dark-mode-toggle:hover {
+    transform: scale(1.2);
+    }
+    
+    /* Animations pour les liens */
+    .nav-menu a {
+    transition: all 0.3s ease;
+    }
+    
+    .nav-menu a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Indicateur de section active */
+    .nav-menu a.active {
+    background-color:#ad871d;
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    /* Dans votre fichier Header.css */
+
+/* Style pour le bouton Admin */
+.nav-menu ul li a[href="/admin"] {
+    background-color: #ff6b6b;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-menu ul li a[href="/admin"]:hover {
+    background-color: #ff4757;
+    transform: translateY(-2px);
+  }
+  
+  .nav-menu ul li a[href="/admin"] i {
+    margin-right: 5px;
+  }
+  
+  /* Style pour le bouton Admin en mode sombre */
+  .dark-mode .nav-menu ul li a[href="/admin"] {
+    background-color: #ff4757;
+    color: white;
+  }
+  
+  /* Style pour le bouton Admin actif */
+  .nav-menu ul li a[href="/admin"].active {
+    background-color: #ff4757;
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+  }
+  .admin-button {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-button:hover {
+  text-decoration: underline;
+}
+
+.admin-button i.fa-cog {
+  font-size: 1.2em;
+  color: #ff6f61; /* Couleur spécifique pour l'icône admin */
+}
+.admin-button {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-button:hover {
+  text-decoration: underline;
+}
+
+.admin-button i.fa-cog {
+  font-size: 1.2em;
+  color: #ff6f61; /* Couleur spécifique pour l'icône admin */
+}
+.admin-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.admin-modal {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.admin-modal h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #333;
+}
+
+.admin-modal p {
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #555;
+}
+
+.admin-modal input {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.admin-modal input:focus {
+  border-color: #007bff;
+}

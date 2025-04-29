@@ -1,0 +1,311 @@
+/* Style général */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f3f3f3;
+  color: #333;
+}
+
+/* Appliquer l'image de fond UNIQUEMENT sur la HomePage */
+.home-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  min-height: 100vh; 
+  background-image: url("../assets/w1.webp");
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  background-attachment: scroll; 
+  margin: 0;
+  padding: 0;
+  overflow: hidden; 
+  background-color: #f3f3f3;
+}
+
+/* Animation pour la deuxième image */
+.home-page::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("../assets/hotel.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  animation: changeBackground 10s infinite;
+}
+
+/* Définir l'animation */
+@keyframes changeBackground {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Section de bienvenue */
+.welcome-section {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 40px;
+  background-color: rgba(54, 35, 35, 0.349); /* Fond blanc semi-transparent */
+  color: #333; /* Couleur de texte sombre pour un bon contraste */
+  border-radius: 15px; /* Bordures plus arrondies */
+  width: 80%;
+  max-width: 800px;
+  z-index: 1;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); /* Ombre douce */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Bordure légère */
+  backdrop-filter: blur(10px); /* Effet de flou pour un look moderne */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation fluide */
+}
+.welcome-section:hover {
+  transform: translateY(-5px); /* Légère élévation au survol */
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2); /* Ombre plus prononcée au survol */
+}
+
+.welcome-section h1 {
+  font-size: 36px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  background: linear-gradient(45deg, #1f1d1dd0 20%, #3f1a02 50%, #4e2a06 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 20px;
+}
+
+/* Boutons */
+.show-roles-button,
+.service-button {
+  padding: 15px 30px;
+  background: linear-gradient(45deg, #8B4513, #A0522D); /* Dégradé marron */
+  color: white;
+  border: none;
+  border-radius: 25px; /* Bordures très arrondies */
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold; /* Texte en gras */
+  margin: 10px;
+  z-index: 1;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Ombre portée */
+  transition: all 0.3s ease; /* Transition fluide pour tous les effets */
+  position: relative;
+  overflow: hidden;
+}
+
+.show-roles-button::before,
+.service-button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300%;
+  height: 300%;
+  background: rgba(255, 255, 255, 0.1); /* Effet de lumière au survol */
+  transform: translate(-50%, -50%) rotate(45deg);
+  transition: all 0.5s ease;
+  z-index: 0;
+}
+
+.show-roles-button:hover,
+.service-button:hover {
+  transform: translateY(-3px); /* Légère élévation au survol */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée au survol */
+}
+
+.show-roles-button:hover::before,
+.service-button:hover::before {
+  transform: translate(-50%, -50%) rotate(45deg) scale(0); /* Effet de lumière qui disparaît */
+}
+
+.show-roles-button:active,
+.service-button:active {
+  transform: translateY(0); /* Retour à la position initiale au clic */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Ombre réduite au clic */
+}
+
+.show-roles-button span,
+.service-button span {
+  position: relative;
+  z-index: 1; /* Assure que le texte est au-dessus de l'effet de lumière */
+}
+
+/* Liste des rôles */
+.roles-list {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+  z-index: 1;
+}
+
+/* Cartes des rôles */
+.roles-list {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+  z-index: 1;
+  padding: 20px; /* Ajout de padding pour un espacement harmonieux */
+}
+
+/* Cartes des rôles */
+.role-card {
+  background-color: white;
+  border-radius: 15px; /* Bordures plus arrondies */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Ombre plus prononcée */
+  text-align: center;
+  position: relative;
+  width: 280px; /* Légèrement plus large */
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  background: linear-gradient(145deg, #ffffff, #f9f9f9); /* Dégradé de fond */
+}
+
+.role-card:hover {
+  transform: scale(1.05); /* Légère augmentation de taille au survol */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Ombre plus intense au survol */
+  background-color: #f5f5f5; /* Changement de fond au survol */
+}
+
+/* Image des rôles */
+.role-image {
+  width: 100%;
+  height: 200px; /* Hauteur légèrement augmentée */
+  object-fit: cover;
+  border-radius: 15px 15px 0 0; /* Bordures arrondies en haut */
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.role-card:hover .role-image {
+  transform: scale(1.1); /* Zoom léger sur l'image au survol */
+  opacity: 0.9; /* Légère réduction d'opacité pour un effet subtil */
+}
+
+/* Overlay sombre pour texte lisible */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.role-card:hover .overlay {
+  opacity: 1; /* Affichage de l'overlay au survol */
+}
+
+/* Bouton sur l'image */
+.role-button {
+  background-color: rgba(255, 255, 255, 0.9); /* Fond blanc semi-transparent */
+  color: #8B4513; /* Couleur marron pour le texte */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px; /* Bordures très arrondies */
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+}
+
+.role-card:hover .role-button {
+  opacity: 1; /* Affichage du bouton au survol */
+}
+
+.role-button:hover {
+  background-color: rgba(255, 255, 255, 1); /* Fond blanc solide au survol */
+  color: #A0522D; /* Couleur marron plus claire au survol */
+}
+
+/* Titre et description */
+.role-card h2 {
+  font-size: 24px; /* Taille de police augmentée */
+  color: #8B4513; /* Couleur marron pour le titre */
+  margin: 15px 0 10px; /* Espacement ajusté */
+  font-weight: bold; /* Texte en gras */
+}
+
+.role-card p {
+  font-size: 16px; /* Taille de police augmentée */
+  color: #555; /* Couleur de texte plus douce */
+  padding: 0 15px 20px; /* Espacement ajusté */
+  line-height: 1.5; /* Hauteur de ligne améliorée */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .welcome-section {
+    width: 90%;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.95); /* Fond plus clair pour une meilleure lisibilité */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre douce */
+  }
+
+  .welcome-section h1 {
+    font-size: 28px;
+    color: #8B4513; /* Couleur marron pour le titre */
+    margin-bottom: 15px; /* Espacement ajusté */
+  }
+
+  .welcome-section p {
+    font-size: 16px;
+    color: #555; /* Couleur de texte plus douce */
+    line-height: 1.6; /* Hauteur de ligne améliorée */
+  }
+
+  .roles-list {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* Espacement entre les cartes */
+    padding: 10px; /* Padding pour un espacement harmonieux */
+  }
+
+  .role-card {
+    width: 100%; /* Pleine largeur pour une meilleure utilisation de l'espace */
+    max-width: 350px; /* Largeur maximale pour éviter que les cartes ne soient trop grandes */
+    margin-bottom: 15px; /* Espacement entre les cartes */
+  }
+
+  .role-card h2 {
+    font-size: 22px; /* Taille de police ajustée */
+    margin: 10px 0; /* Espacement ajusté */
+  }
+
+  .role-card p {
+    font-size: 14px; /* Taille de police ajustée */
+    padding: 0 10px 15px; /* Espacement ajusté */
+  }
+
+  .role-image {
+    height: 160px; /* Hauteur ajustée pour les petits écrans */
+  }
+
+  .show-roles-button,
+  .service-button {
+    width: 100%; /* Pleine largeur pour les boutons */
+    max-width: 300px; /* Largeur maximale pour éviter que les boutons ne soient trop larges */
+    margin: 10px auto; /* Centrage des boutons */
+    font-size: 16px; /* Taille de police ajustée */
+  }
+}

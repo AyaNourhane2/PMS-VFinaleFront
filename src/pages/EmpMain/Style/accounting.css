@@ -1,0 +1,227 @@
+/* Styles globaux */
+body {
+  margin: 50;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to right, #fdf8f1, #f5e6d0);
+  color: #4a2c2a;
+  line-height: 1.8;
+}
+
+/* Conteneur principal */
+.comptableService {
+  padding: 30px;
+  max-width: 1200px;
+  margin-left: 300px;
+
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  transition: 0.4s ease-in-out;
+}
+
+.comptableService:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+/* Tableaux */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.table th,
+.table td {
+  padding: 18px;
+  border: 1px solid #c1a57b;
+  text-align: left;
+  font-size: 17px;
+}
+
+.table th {
+  background: linear-gradient(to right, #8c6239, #a87e4c);
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.table tr:nth-child(even) {
+  background-color: #f7e5c6;
+}
+
+/* Boutons */
+.button {
+  padding: 14px 22px;
+  background: linear-gradient(to right, #8c6239, #a87e4c);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.button:hover {
+  background: linear-gradient(to right, #6e4b2f, #8c6239);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+}
+
+.button.danger {
+  background: linear-gradient(to right, #b33a3a, #d64f4f);
+}
+
+.button.danger:hover {
+  background: linear-gradient(to right, #922828, #b33a3a);
+}
+
+.button.success {
+  background: linear-gradient(to right, #8c784d, #a89767);
+}
+
+.button.success:hover {
+  background: linear-gradient(to right, #6e5a36, #8c784d);
+}
+
+/* Formulaires */
+.form {
+  margin-bottom: 30px;
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  background: #fffaf0;
+  padding: 22px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.input {
+  padding: 16px;
+  border: 2px solid #c1a57b;
+  border-radius: 10px;
+  flex: 1;
+  font-size: 17px;
+  transition: all 0.3s ease-in-out;
+}
+
+.input:focus {
+  border-color: #8c6239;
+  box-shadow: 0 0 10px rgba(166, 124, 82, 0.3);
+}
+
+/* Sections */
+.section {
+  margin-bottom: 50px;
+  padding: 30px;
+  background: #fffaf0;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+/* Titres */
+.heading {
+  color: #4a2c2a;
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 28px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Barre de recherche */
+.search-bar {
+  display: flex;
+  align-items: center;
+  max-width: 500px;
+  margin: 0 auto 30px auto;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  padding: 12px;
+  transition: 0.3s ease-in-out;
+}
+
+.search-bar:hover {
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
+}
+
+/* Icône de recherche */
+.search-bar i {
+  font-size: 22px;
+  color: #8c6239;
+  padding: 14px;
+}
+
+/* Input de recherche */
+.search-input {
+  flex: 1;
+  border: none;
+  padding: 16px;
+  font-size: 17px;
+  outline: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  box-shadow: inset 0 0 8px rgba(166, 124, 82, 0.3);
+}
+
+/* Bouton de recherche */
+.search-button {
+  background: linear-gradient(to right, #8c6239, #a87e4c);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.search-button:hover {
+  background: linear-gradient(to right, #6e4b2f, #8c6239);
+  transform: scale(1.06);
+}
+
+.search-button:active {
+  transform: scale(0.96);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form {
+    flex-direction: column;
+  }
+
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .table th, .table td {
+    padding: 14px;
+  }
+
+  .search-bar {
+    max-width: 100%;
+    padding: 14px;
+  }
+
+  .search-button {
+    font-size: 15px;
+    padding: 10px 18px;
+  }
+}

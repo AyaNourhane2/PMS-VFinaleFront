@@ -1,0 +1,270 @@
+/* Footer principal */
+.footer {
+    background: #333;
+    color: #ecf0f1; /* Texte blanc clair */
+    padding: 60px 0; /* Augmentation de l'espacement */
+    box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.3); /* Ombre douce en haut */
+    position: relative;
+    overflow: hidden;
+}
+
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    transform: rotate(45deg);
+    animation: shimmer 10s infinite linear;
+    z-index: 1;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%) rotate(45deg);
+    }
+    100% {
+        transform: translateX(100%) rotate(45deg);
+    }
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.footer-section {
+    flex: 1 1 280px; /* Largeur ajustée pour mieux s'adapter */
+    margin: 25px;
+    text-align: left;
+}
+
+.footer-section h4 {
+    border-bottom: 2px solid #f1c40f; /* Bordure dorée */
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    font-size: 24px; /* Taille légèrement augmentée */
+    font-weight: bold;
+    letter-spacing: 1.5px; /* Espacement entre les lettres */
+    position: relative;
+    transition: all 0.3s ease; /* Transition fluide */
+}
+
+.footer-section h4::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: #f1c40f; /* Effet de soulignement doré */
+    border-radius: 2px;
+    transition: width 0.3s ease; /* Animation au survol */
+}
+
+.footer-section h4:hover::after {
+    width: 100%; /* Soulignement complet au survol */
+}
+
+.footer-section a {
+    color: #ecf0f1; /* Texte blanc clair */
+    text-decoration: none;
+    display: block;
+    margin: 12px 0;
+    font-size: 16px; /* Taille légèrement augmentée */
+    position: relative;
+    transition: color 0.3s ease, transform 0.3s ease; /* Transition fluide */
+    padding-left: 20px;
+}
+
+.footer-section a::before {
+    content: '→'; /* Icône flèche avant chaque lien */
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Apparition fluide */
+    transform: translateX(-5px);
+}
+
+.footer-section a:hover {
+    color: #f1c40f; /* Or brillant au survol */
+    transform: translateX(5px); /* Effet de déplacement subtil */
+}
+
+.footer-section a:hover::before {
+    opacity: 1; /* Affichage de la flèche au survol */
+    transform: translateX(0);
+}
+
+.footer-section form {
+    display: flex;
+    margin-top: 25px;
+}
+
+.footer-section input {
+    flex: 1;
+    padding: 14px;
+    margin-right: 15px;
+    border: 1px solid #34495e;
+    border-radius: 12px;
+    background: #34495e; /* Fond plus sombre */
+    color: #ecf0f1;
+    font-size: 14px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease; /* Transition fluide */
+}
+
+.footer-section input:focus {
+    border-color: #f1c40f; /* Bordure dorée lors du focus */
+    box-shadow: 0 0 12px rgba(241, 196, 15, 0.6);
+    transform: scale(1.02); /* Légère augmentation de taille */
+}
+
+.footer-section button {
+    padding: 14px 22px;
+    background: #f1c40f; /* Bouton doré */
+    border: none;
+    color: #2c3e50; /* Texte bleu-gris foncé */
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Transition fluide */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre portée */
+}
+
+.footer-section button:hover {
+    background: #e67e22; /* Orange vif au survol */
+    transform: scale(1.05); /* Légère augmentation de taille */
+    box-shadow: 0 6px 12px rgba(230, 126, 34, 0.5); /* Ombre plus prononcée */
+}
+
+.footer-section select {
+    margin: 15px 0;
+    padding: 14px;
+    background: #34495e;
+    color: #ecf0f1;
+    border: 1px solid #34495e;
+    border-radius: 12px;
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease; /* Transition fluide */
+}
+
+.footer-section select:focus {
+    background: #2c3e50;
+    border-color: #f1c40f;
+    transform: scale(1.02); /* Légère augmentation de taille */
+}
+
+.footer-section iframe {
+    width: 100%;
+    height: 220px; /* Hauteur légèrement augmentée */
+    border: 0;
+    margin-top: 25px;
+    border-radius: 12px; /* Coins arrondis */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombre portée */
+}
+
+/* Styles pour la section des awards */
+.footer-section.awards {
+    text-align: left;
+}
+
+.footer-section.awards .award-item {
+    display: flex;
+    align-items: center;
+    margin: 18px 0;
+    transition: transform 0.3s ease; /* Animation fluide */
+}
+
+.footer-section.awards .award-item:hover {
+    transform: translateX(5px); /* Effet de déplacement au survol */
+}
+
+.footer-section.awards img {
+    width: 80px; /* Taille augmentée pour les logos */
+    height: auto;
+    margin-right: 18px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation fluide */
+    border-radius: 12px; /* Coins arrondis pour les logos */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre portée */
+}
+
+.footer-section.awards img:hover {
+    transform: scale(1.1); /* Zoom au survol */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée */
+}
+
+.footer-section.awards span {
+    font-size: 18px; /* Taille légèrement augmentée */
+    color: #ecf0f1;
+    line-height: 1.2;
+    font-weight: 500;
+}
+
+/* Styles pour les médias sociaux */
+.social-media {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    flex-wrap: wrap;
+}
+
+.social-media a {
+    color: #ecf0f1;
+    margin: 0 22px;
+    font-size: 36px; /* Taille légèrement augmentée */
+    transition: color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Transition fluide */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Ombre portée */
+}
+
+.social-media a:hover {
+    color: #f1c40f; /* Or brillant au survol */
+    transform: scale(1.2); /* Légère augmentation de taille */
+    text-shadow: 0 4px 8px rgba(241, 196, 15, 0.5); /* Ombre plus prononcée */
+}
+
+/* Section de copyright */
+.footer-section.copyright {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 16px;
+    color: #bdc3c7; /* Couleur gris clair */
+    letter-spacing: 1.5px; /* Espacement entre les lettres */
+    font-family: 'Arial', sans-serif;
+    font-style: italic;
+}
+
+.footer-section.copyright p {
+    margin: 0;
+}
+
+/* Styles responsifs */
+@media (max-width: 768px) {
+    .footer-section {
+        flex: 1 1 100%;
+        text-align: center;
+    }
+
+    .footer-section.awards img {
+        width: 60px; /* Réduction de la taille des logos */
+    }
+
+    .footer-section.awards span {
+        font-size: 16px; /* Réduction de la taille du texte */
+    }
+
+    .social-media {
+        justify-content: space-around;
+    }
+
+    .social-media a {
+        margin: 18px;
+    }
+}

@@ -1,0 +1,224 @@
+/* Reset et styles de base */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Conteneur principal */
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+  font-family: 'Poppins', Arial, sans-serif;
+  background: linear-gradient(135deg, #9e5829e7, #947443);
+  box-sizing: border-box;
+}
+
+/* Grille de cartes */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  place-items: center;
+}
+
+/* Styles des cartes */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  min-height: 350px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #ff6b6b, #ff4757);
+}
+
+/* Contenu image et icône */
+.image-icon-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.circle-image {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #ff6b6b;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.circle-image:hover {
+  transform: scale(1.1);
+  border-color: #ff4757;
+}
+
+.icon-circle {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  background-color: #fff;
+  border-radius: 50%;
+  padding: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  border: 2px solid #ff6b6b;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-circle:hover {
+  background-color: #ff6b6b;
+  transform: scale(1.2);
+}
+
+.icon-circle i {
+  font-size: 1.3rem;
+  color: #ff6b6b;
+  transition: color 0.3s ease;
+}
+
+.icon-circle:hover i {
+  color: #fff;
+}
+
+/* Contenu texte */
+.card-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-title {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  color: #333;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.card-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #ff6b6b, #ff4757);
+  border-radius: 3px;
+}
+
+.card-description {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* Détails */
+.card-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.6s ease, opacity 0.4s ease;
+  opacity: 0;
+  width: 100%;
+}
+
+.card-details.show {
+  max-height: 600px;
+  opacity: 1;
+}
+
+.list-item {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 10px;
+  padding-left: 20px;
+  position: relative;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.list-item::before {
+  content: '•';
+  color: #ff6b6b;
+  font-size: 1.5rem;
+  position: absolute;
+  left: 0;
+  top: -3px;
+}
+
+/* Bouton */
+.toggle-details-button {
+  background: linear-gradient(90deg, #ff6b6b, #ff4757);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+  box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+  width: auto;
+  min-width: 180px;
+}
+
+.toggle-details-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+  }
+  
+  .card {
+    max-width: 100%;
+  }
+}

@@ -1,0 +1,688 @@
+/* ServiceDetailsPage.css */
+
+/* Style général de la page */
+.service-details-page {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #bd968ee8,#8f765e, #8d7167);/* Marron élégant */
+
+  min-height: 100vh;
+}
+
+/* Style pour le bouton de retour */
+.back-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+.back-button:hover {
+  background-color: #0056b3;
+}
+
+/* Style pour les cartes de menu (RestaurantCard) */
+.restaurant-card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.dish-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card h3 {
+  font-size: 20px;
+  margin: 10px;
+}
+
+.card p {
+  font-size: 14px;
+  margin: 5px 10px;
+  color: #555;
+}
+
+/* Style pour la modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+}
+
+.modal-content img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.modal-content h3 {
+  font-size: 24px;
+  margin: 10px 0;
+}
+
+.modal-content p {
+  font-size: 16px;
+  margin: 5px 0;
+  color: #555;
+}
+
+.rating-section {
+  margin-top: 20px;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.rating-stars span {
+  font-size: 24px;
+  color: #ccc;
+  cursor: pointer;
+}
+
+.rating-stars span.active {
+  color: #ffcc00;
+}
+
+.submit-rating,
+.validate-order,
+.close-modal {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 5px;
+}
+
+.submit-rating:hover,
+.validate-order:hover,
+.close-modal:hover {
+  background-color: #0056b3;
+}
+
+.close-modal {
+  background-color: #dc3545;
+}
+
+.close-modal:hover {
+  background-color: #c82333;
+}
+
+/* Style pour les cartes de gym */
+.gym-services-container {
+  display: flex;
+  justify-content: center; /* Centre les cartes horizontalement */
+  flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
+  gap: 20px; /* Espacement entre les cartes */
+  padding: 20px; /* Ajoute un peu d'espace autour des cartes */
+  max-width: 1200px; /* Limite la largeur maximale du conteneur */
+  margin: 0 auto; /* Centre le conteneur sur la page */
+}
+.gym-card {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  width: 300px;
+  margin: 10px;
+  text-align: center;
+}
+
+.gym-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Style des images dans les cartes de gym */
+.gym-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 3px solid #007bff;
+}
+
+/* Style du texte dans les cartes de gym */
+.gym-card h3 {
+  font-size: 30px;
+  margin: 15px 0 10px;
+  color: #333;
+}
+
+.gym-card p {
+  font-size: 16px;
+  margin: 5px 10px;
+  color: #555;
+}
+
+/* Style des boutons dans les cartes de gym */
+.service-card {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  width: 300px;
+  margin: 10px;
+  text-align: center;
+  padding: 20px;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.service-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 3px solid;
+}
+
+.service-card h3 {
+  font-size: 40px;
+  margin: 15px 0 10px;
+  color: #333;
+}
+
+.service-card p {
+  font-size: 15px;
+  font-weight: bold;
+  margin: 5px 10px;
+  color: #fdfdfd;
+}
+
+.service-card .icon {
+  font-size: 50px;
+  margin-bottom: 10px;
+}
+.gym-card button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 10px 0;
+  transition: background-color 0.2s;
+}
+
+.gym-card button:hover {
+  background-color: #0056b3;
+}
+
+/* Style pour le bouton "Rejoins-nous !" */
+.gym-card .join-button {
+  background-color: #28a745;
+}
+
+.gym-card .join-button:hover {
+  background-color: #218838;
+}
+/* Styles pour le bouton d'ajout de plat */
+.add-dish-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.add-dish-button:hover {
+  background-color: #3e8e41;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Styles pour le formulaire d'ajout de plat */
+.add-dish-form {
+  background-color: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 25px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.add-dish-form h2 {
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 24px;
+}
+
+.add-dish-form input {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border 0.3s ease;
+  box-sizing: border-box;
+}
+
+.add-dish-form input:focus {
+  border-color: #4CAF50;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.add-dish-form .form-group {
+  margin-bottom: 15px;
+}
+
+.add-dish-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+.add-dish-form .button-group {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 15px;
+}
+
+.add-dish-form button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.add-dish-form button:hover {
+  background-color: #3e8e41;
+  transform: translateY(-1px);
+}
+
+.add-dish-form button.cancel {
+  background-color: #f44336;
+}
+
+.add-dish-form button.cancel:hover {
+  background-color: #d32f2f;
+}
+/* Styles pour les cartes de service spa */
+/* Conteneur principal avec centrage amélioré */
+.spa-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  padding: 30px;
+  min-height: 100vh; /* Prend toute la hauteur de l'écran */
+  box-sizing: border-box;
+  margin: 0 auto;
+  background-color: #f8f9fa; /* Fond légèrement gris pour mieux voir */
+}
+
+/* Styles des cartes avec centrage parfait */
+.spa-card {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  cursor: pointer;
+  width: 320px;
+  text-align: center;
+  padding: 0 0 25px 0;
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  margin: 10px; /* Marge supplémentaire */
+}
+
+/* Pour exactement 3 cartes centrées */
+@media (min-width: 1100px) {
+  .spa-container {
+    max-width: 1100px; /* 3 cartes * 320px + 2 gaps * 30px */
+  }
+}
+
+.spa-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.spa-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-bottom: 4px solid #6c5ce7;
+  transition: transform 0.3s ease;
+}
+
+.spa-card:hover img {
+  transform: scale(1.03);
+}
+
+.spa-card .card-content {
+  padding: 20px;
+}
+
+.spa-card h3 {
+  font-size: 24px;
+  margin: 15px 0 12px;
+  color: #2d3436;
+  font-weight: 600;
+  position: relative;
+  display: inline-block;
+}
+
+.spa-card h3:after {
+  content: '';
+  position: absolute;
+  width: 50px;
+  height: 3px;
+  background: #6c5ce7;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 3px;
+}
+
+.spa-card p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 15px 0;
+  color: #636e72;
+}
+
+.spa-card .icon {
+  font-size: 48px;
+  color: #6c5ce7;
+  margin: 20px 0 15px;
+  transition: transform 0.3s ease;
+}
+
+.spa-card:hover .icon {
+  transform: scale(1.1);
+}
+
+.spa-card .badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #6c5ce7;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.spa-card .card-button {
+  display: inline-block;
+  background: #6c5ce7;
+  color: white;
+  padding: 10px 25px;
+  border-radius: 30px;
+  text-decoration: none;
+  margin-top: 10px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 2px solid #6c5ce7;
+}
+
+.spa-card .card-button:hover {
+  background: transparent;
+  color: #6c5ce7;
+}
+/* Styles pour les cartes de service d'urgence */
+.emergency-card {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  width: 300px;
+  margin: 10px;
+  text-align: center;
+  padding: 20px;
+}
+
+.emergency-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.emergency-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 3px solid #e74c3c;
+}
+
+.emergency-card h3 {
+  font-size: 22px;
+  margin: 15px 0 10px;
+  color: #333;
+}
+
+.emergency-card p {
+  font-size: 16px;
+  margin: 5px 10px;
+  color: #555;
+}
+
+.emergency-card .icon {
+  font-size: 40px;
+  color: #e74c3c;
+  margin-bottom: 10px;
+}
+/* Styles pour les cartes de room service */
+.room-service-card {
+  background: linear-gradient(135deg, #fff8f0, #ffffff); /* Fond doux */
+  border-radius: 20px; /* Coins plus arrondis */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Ombre plus prononcée */
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  cursor: pointer;
+  width: 320px; /* Largeur légèrement augmentée */
+  margin: 15px;
+  text-align: center;
+  padding: 25px;
+  position: relative;
+}
+
+.room-service-card:hover {
+  transform: translateY(-10px) rotate(1deg); /* Légère rotation au survol */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25); /* Ombre plus dynamique */
+}
+
+/* Style de l'image dans les cartes de room service */
+.room-service-card img {
+  width: 100%;
+  height: 220px; /* Hauteur légèrement augmentée */
+  object-fit: cover;
+  border-bottom: 4px solid #ff6f61; /* Bordure inférieure avec nouvelle couleur */
+  transition: transform 0.3s ease;
+}
+
+.room-service-card:hover img {
+  transform: scale(1.1); /* Zoom léger sur l'image */
+}
+
+/* Style des titres dans les cartes de room service */
+.room-service-card h3 {
+  font-family: 'Poppins', sans-serif; /* Police moderne */
+  font-size: 26px; /* Taille augmentée */
+  margin: 20px 0 10px;
+  color: #000000;
+  font-weight: 600; /* Gras pour plus d'impact */
+}
+
+/* Style du texte descriptif */
+.room-service-card p {
+  font-family: 'Poppins', sans-serif;
+  font-size: 40px;
+  margin: 5px 10px;
+  color: #0c0c0c;
+  line-height: 1.6; /* Espacement entre les lignes pour une meilleure lisibilité */
+}
+
+/* Icône dans les cartes de room service */
+.room-service-card .icon {
+  font-size: 45px;
+  color: #ff6f61; /* Couleur ajustée */
+  margin-bottom: 15px;
+  transition: transform 0.3s ease;
+}
+
+.room-service-card:hover .icon {
+  transform: scale(1.2); /* Animation d'agrandissement de l'icône */
+}
+
+/* Bouton personnalisé pour les cartes de room service */
+.room-service-card .order-button {
+  background: #ff6f61; /* Nouvelle couleur principale */
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 30px; /* Coins arrondis pour un design moderne */
+  cursor: pointer;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-top: 15px;
+}
+
+.room-service-card .order-button:hover {
+  background: #ff4d4d; /* Couleur plus foncée au survol */
+  transform: scale(1.1); /* Légère augmentation de taille */
+}
+/* ServiceDetailsPage.css */
+
+/* Style pour la section de feedback */
+.feedback-section {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.feedback-section h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #0e0d0d;
+}
+
+.feedback-section textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-bottom: 10px;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.feedback-section button {
+  background-color: #e67e22;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.feedback-section button:hover {
+  background-color: #d35400;
+}
+.delete-button {
+  background-color: #e74c3c; /* Rouge pour indiquer une action critique */
+  color: white; /* Texte blanc pour contraste */
+  border: none; /* Pas de bordure */
+  padding: 8px 16px; /* Espacement interne */
+  font-size: 14px; /* Taille du texte */
+  font-weight: bold; /* Texte en gras */
+  border-radius: 5px; /* Coins arrondis */
+  cursor: pointer; /* Curseur en forme de main */
+  transition: background-color 0.3s ease; /* Animation fluide lors du survol */
+}
+
+.delete-button:hover {
+  background-color: #c0392b; /* Rouge plus foncé au survol */
+}
+
+.delete-button:active {
+  transform: scale(0.98); /* Légère réduction de taille lors du clic */
+}
