@@ -9,6 +9,10 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Liste des routes publiques où la barre de navigation ne doit pas s'afficher
+  const publicRoutes = ['/', '/login', '/signup', '/plus-information'];
+  const shouldShowNavMenu = !publicRoutes.includes(location.pathname);
+
   // Récupérer les données de l'utilisateur lorsque l'emplacement change
   useEffect(() => {
     setTimeout(() => {
@@ -70,72 +74,71 @@ const Header = () => {
           </Link>
         </div>
 
-        {/* Menu de navigation */}
-        <nav className={`nav-menu ${isMobileMenuOpen ? 'active' : ''}`}>
-          <ul>
-            {/* Accueil */}
-            <li>
-              <Link
-                to="/"
-                className={location.pathname === '/' ? 'active' : ''}
-              >
-                <i className="fas fa-home"></i>
-                <span>Accueil</span>
-              </Link>
-            </li>
-
-             
-              <>
-                {/* Connexion */}
+        {/* Menu de navigation (affiché uniquement si shouldShowNavMenu est true) */}
+        {shouldShowNavMenu && (
+          <>
+            <nav className={`nav-menu ${isMobileMenuOpen ? 'active' : ''}`}>
+              <ul>
+                {/* Accueil */}
                 <li>
                   <Link
-                    to="/login"
-                    className={location.pathname === '/login' ? 'active' : ''}
+                    to="/"
+                    className={location.pathname === '/' ? 'active' : ''}
                   >
-                    <i className="fas fa-sign-in-alt"></i>
-                    <span>Se connecter</span>
+                    <i className="fas fa-home"></i>
+                    <span>Accueil</span>
                   </Link>
                 </li>
-                {/* Inscription */}
+
+                <>
+                  {/* Connexion */}
+                  <li>
+                    <Link
+                      to="/login"
+                      className={location.pathname === '/login' ? 'active' : ''}
+                    >
+                      <i className="fas fa-sign-in-alt"></i>
+                      <span>Se connecter</span>
+                    </Link>
+                  </li>
+                  {/* Inscription */}
+                  <li>
+                    <Link
+                      to="/signup"
+                      className={location.pathname === '/signup' ? 'active' : ''}
+                    >
+                      <i className="fas fa-user-plus"></i>
+                      <span>S'inscrire</span>
+                    </Link>
+                  </li>
+                </>
+
+                {/* Bouton Mode Sombre */}
                 <li>
-                  <Link
-                    to="/signup"
-                    className={location.pathname === '/signup' ? 'active' : ''}
+                  <button
+                    className="dark-mode-toggle"
+                    onClick={toggleDarkMode}
+                    title="Toggle Dark Mode"
                   >
-                    <i className="fas fa-user-plus"></i>
-                    <span>S'inscrire</span>
-                  </Link>
+                    {isDarkMode ? (
+                      <i className="fas fa-sun"></i>
+                    ) : (
+                      <i className="fas fa-moon"></i>
+                    )}
+                  </button>
                 </li>
-                <li>
-             
-            </li>
-              </>
-            
+              </ul>
+            </nav>
 
-            {/* Bouton Mode Sombre */}
-            <li>
-              <button
-                className="dark-mode-toggle"
-                onClick={toggleDarkMode}
-                title="Toggle Dark Mode"
-              >
-                {isDarkMode ? (
-                  <i className="fas fa-sun"></i>
-                ) : (
-                  <i className="fas fa-moon"></i>
-                )}
-              </button>
-            </li>
-          </ul>
-        </nav>
-
-        {/* Bouton de menu mobile */}
-        <div
-          className="mobile-menu-toggle"
-          onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          <i className={`fas ${isMobileMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
-        </div>
+            {/* Bouton de menu mobile */}
+            <div
+              className="mobile-menu-toggle"
+              onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              <i className={`fas ${isMobileMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
+            </div>
+          </>
+        )}
       </div>
     </header>
   );

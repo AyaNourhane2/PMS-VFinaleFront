@@ -1,42 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaSignInAlt, FaUserPlus, FaInfoCircle } from 'react-icons/fa';
 import coverImage1 from '../asset/img1.jpg';
 import coverImage2 from '../asset/img2.jpg';
 import coverImage3 from '../asset/image2.jpg';
-import Footer1 from '../components/footer'; // Importez le composant Footer1
+import Footer1 from '../components/footer';
 
 function Home() {
     const navigate = useNavigate();
     const [currentImage, setCurrentImage] = useState(0);
-
     const images = [coverImage1, coverImage2, coverImage3];
 
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentImage((prevImage) => (prevImage + 1) % images.length);
-        }, 5000); // Change d'image toutes les 5 secondes
+        }, 5000);
 
         return () => clearInterval(interval);
     }, [images.length]);
 
-    // Styles pour les boutons (couleurs harmonisées avec les photos)
+    // Style commun pour les boutons
     const buttonStyle = {
-        padding: '10px 20px',
+        padding: '12px 24px',
         fontSize: '16px',
         border: 'none',
-        borderRadius: '5px',
+        borderRadius: '8px',
         cursor: 'pointer',
-        marginRight: '10px',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)', // Fond semi-transparent
-        color: '#333', // Texte foncé pour contraster
-        transition: 'background-color 0.3s ease, transform 0.2s ease',
+        backgroundColor: '#000000',
+        color: '#ffffff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '8px',
+        minWidth: '180px',
+        margin: '0 10px',
+        transition: 'all 0.3s ease',
     };
 
-    const handleLearnMoreClick = () => {
-        navigate('/plus-information');
-    };
-
-    
+    const handleLearnMoreClick = () => navigate('/plus-information');
+    const handleLoginClick = () => navigate('/login');
+    const handleRegisterClick = () => navigate('/signup');
 
     return (
         <div>
@@ -57,23 +60,71 @@ function Home() {
                 <h2>
                     <strong style={{ fontSize: '3rem' }}>RoyalStay</strong>
                 </h2>
-                <h3 style={{ fontSize: '1.5rem', marginBottom: '20px' }}>
-                Bienvenue à RoyalStay, où le luxe rencontre le confort pour une expérience de séjour exceptionnelle. Profitez de nos services haut de gamme et de notre ambiance chaleureuse pour un moment inoubliable. Nous vous souhaitons un excellent séjour !
+                <h3 style={{ fontSize: '1.5rem', marginBottom: '40px', maxWidth: '800px' }}>
+                    Bienvenue à RoyalStay, où le luxe rencontre le confort pour une expérience de séjour exceptionnelle.
                 </h3>
 
-                {/* Boutons avec nouveau style */}
-                <div>
-                    <button 
-                        onClick={handleLearnMoreClick} 
+                {/* Conteneur des boutons avec flexbox */}
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '20px',
+                    width: '100%',
+                    maxWidth: '800px',
+                    margin: '0 auto',
+                }}>
+                    <button
+                        onClick={handleLoginClick}
                         style={buttonStyle}
+                        onMouseEnter={(e) => {
+                            e.target.style.backgroundColor = '#333333';
+                            e.target.style.transform = 'translateY(-2px)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.target.style.backgroundColor = '#000000';
+                            e.target.style.transform = 'translateY(0)';
+                        }}
                     >
-                        Learn More
+                        <FaSignInAlt style={{ fontSize: '18px' }} />
+                        Se Connecter
                     </button>
-
-                  
+                    
+                    <button
+                        onClick={handleRegisterClick}
+                        style={buttonStyle}
+                        onMouseEnter={(e) => {
+                            e.target.style.backgroundColor = '#333333';
+                            e.target.style.transform = 'translateY(-2px)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.target.style.backgroundColor = '#000000';
+                            e.target.style.transform = 'translateY(0)';
+                        }}
+                    >
+                        <FaUserPlus style={{ fontSize: '18px' }} />
+                        S'inscrire
+                    </button>
+                    
+                    <button
+                        onClick={handleLearnMoreClick}
+                        style={buttonStyle}
+                        onMouseEnter={(e) => {
+                            e.target.style.backgroundColor = '#333333';
+                            e.target.style.transform = 'translateY(-2px)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.target.style.backgroundColor = '#000000';
+                            e.target.style.transform = 'translateY(0)';
+                        }}
+                    >
+                        <FaInfoCircle style={{ fontSize: '18px' }} />
+                        En savoir plus
+                    </button>
                 </div>
             </div>
-            <Footer1 /> {/* Ajoutez le composant Footer1 ici */}
+            <Footer1 />
         </div>
     );
 }

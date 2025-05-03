@@ -158,7 +158,8 @@ const SignUp = () => {
           </form>
 
           <p style={styles.loginLink}>
-            Déjà inscrit? <Link to="/login" style={styles.link}>Se connecter</Link>
+            Déjà inscrit? <Link to="/login" style={styles.link}>Se connecter</Link>  ou
+                        <Link to="/" style={styles.link}>Accueil</Link>
           </p>
         </div>
       </div>

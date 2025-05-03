@@ -10,7 +10,7 @@ import {
   FaFileExport,
   FaSearch,
 } from "react-icons/fa";
-import Sidebar from "../components/Sidebar"; // Chemin ajusté
+import Sidebar from "../components/Sidebar";
 import profilecomptable from "../assets/profilecompatible.webp";
 import "../Style/accounting.css";
 

@@ -138,7 +138,6 @@
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1), inset 0px 0px 10px rgba(255, 255, 255, 0.2); /* Ombre extérieure et intérieure */
   transition: all 0.4s ease; /* Transition fluide */
   backdrop-filter: blur(10px); /* Effet de flou Glassmorphism */
-  
 }
 
 .profile-section:hover {

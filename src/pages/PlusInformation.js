@@ -3,13 +3,15 @@ import gymImage from '../asset/gym.webp';
 import restaurationImage from '../asset/restauration.webp';
 import spaImage from '../asset/spa.webp';
 import emergencyImage from '../asset/emergency.webp';
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from 'react-icons/fa'; // Import de l'icône de flèche
 
 import './LearnMore.css';
 
 const LearnMore = () => {
   const [isClicked, setIsClicked] = useState(null);
-  const [showDetails, setShowDetails] = useState(Array(4).fill(false)); // 4 services
-  
+  const [showDetails, setShowDetails] = useState(Array(4).fill(false));
+  const navigate = useNavigate();
 
   const handleCardClick = (index) => {
     setIsClicked(index);
@@ -21,8 +23,6 @@ const LearnMore = () => {
     newShowDetails[index] = !newShowDetails[index];
     setShowDetails(newShowDetails);
   };
-
-  
 
   return (
     <div className="container">
@@ -110,11 +110,19 @@ const LearnMore = () => {
                     <li key={i} className="list-item">{detail}</li>
                   ))}
                 </ul>
-                
               </div>
             </div>
           </div>
         ))}
+        
+        {/* Bouton de retour en forme de flèche */}
+        <button 
+          className="back-button" 
+          onClick={() => navigate('/')}
+        >
+          <FaArrowLeft className="arrow-icon" />
+          Retour à l'accueil
+        </button>
       </div>
     </div>
   );

@@ -489,7 +489,7 @@ const ServiceDetailsPage = () => {
       {serviceId === "4" && <EmergencyService />}
       <button
         className="back-button"
-        onClick={() => navigate("/additional-services-page")}
+        onClick={() => navigate("/employee/services")}
         style={{
           padding: "10px 20px",
           fontSize: "16px",

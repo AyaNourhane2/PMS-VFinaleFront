@@ -221,7 +221,8 @@ const Login = () => {
           </form>
 
           <p style={styles.linkContainer}>
-            Pas de compte ? <Link to="/signup" style={styles.link}>S'inscrire</Link>
+            Pas de compte ? <Link to="/signup" style={styles.link}>S'inscrire</Link> ou
+            <Link to="/" style={styles.link}>Accueil</Link>
           </p>
         </div>
       </div>

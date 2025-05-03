@@ -1573,37 +1573,37 @@ const ReceptionistDashboard = () => {
     setActiveSection(buttonName);
     switch (buttonName) {
       case "Tableau de Bord":
-        navigate("/employee/receptionist");
+        navigate("/receptionist");
         break;
       case "Accueil Clients":
-        navigate("/employee/receptionist/welcome");
+        navigate("/receptionist/welcome");
         break;
       case "Authentifier une Réservation":
-        navigate("/employee/receptionistt/authenticate");
+        navigate("/receptionist/authenticate");
         break;
       case "Créer une Réservation":
-        navigate("/employee/receptionist/create-reservation");
+        navigate("/receptionist/create-reservation");
         break;
       case "Gestion des Départs":
-        navigate("/employee/receptionist/departure");
+        navigate("/receptionist/departure");
         break;
       case "Assistance Client":
-        navigate("/employee/receptionist/assistance");
+        navigate("/receptionist/assistance");
         break;
       case "Gestion des Chambres":
-        navigate("/employee/receptionist/room-management");
+        navigate("/receptionist/room-management");
         break;
       case "Gestion des Clients":
-        navigate("/employee/receptionist/client-management");
+        navigate("/receptionist/client-management");
         break;
       case "Tâches Administratives":
-        navigate("/employee/receptionist/administrative");
+        navigate("/receptionist/administrative");
         break;
       case "Statistiques":
-        navigate("/employee/receptionist/statistics");
+        navigate("/receptionist/statistics");
         break;
       default:
-        navigate("/employee/receptionist");
+        navigate("/receptionist");
         break;
     }
   };

@@ -34,7 +34,7 @@ const AdditionalServicesPage = () => {
 
   // Fonction pour gérer le clic sur une carte
   const handleServiceClick = (serviceId) => {
-    navigate(`/employee/service-details/${serviceId}`);
+    navigate(`/employee/services/${serviceId}`);
   };
 
   return (

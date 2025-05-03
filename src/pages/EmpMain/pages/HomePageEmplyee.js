@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "../Style/HomePagEmplyere.css";
+import "../Style/HomePage.css";
 
 // Importation des images
 import receptionistImage from "../assets/receptioniste.webp";
@@ -56,7 +56,7 @@ const HomePage = () => {
         ))}
       </div>
 
-      <button className="service-button" onClick={() => navigate("/employee/additional-services")}>
+      <button className="service-button" onClick={() => navigate("/employee/services")}>
         Service Général
       </button>
     </div>
