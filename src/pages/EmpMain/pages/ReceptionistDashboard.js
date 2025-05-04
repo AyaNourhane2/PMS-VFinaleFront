@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-undef */
-import React, { useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import room1001 from "../assets/room1001.png";
 import room1002 from "../assets/room1002.png";
 import room1003 from "../assets/room1003.png";
@@ -21,7 +21,7 @@ import {
   FaQuestionCircle,
   FaClipboardList,
   FaHome,
-  FaChartBar, // Add this line
+  FaChartBar,
   FaCoins, 
 } from "react-icons/fa";
 import profilereceptioniste from "../assets/profilereceptioniste.webp";
@@ -189,7 +189,6 @@ const GuestWelcome = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Logique pour enregistrer l'arrivée du client
     alert(`Client ${guestInfo.name} enregistré dans la chambre ${roomAssignment.roomNumber}!`);
   };
 
@@ -853,7 +852,7 @@ const RoomManagement = () => {
       price: 100,
       checkInDate: "",
       checkOutDate: "",
-      image: room1001, // Utiliser l'image locale
+      image: room1001,
     },
     {
       id: 2,
@@ -865,7 +864,7 @@ const RoomManagement = () => {
       price: 150,
       checkInDate: "2023-10-25",
       checkOutDate: "2023-10-30",
-      image: room1002, // Utiliser l'image locale
+      image: room1002,
     },
     {
       id: 3,
@@ -877,7 +876,7 @@ const RoomManagement = () => {
       price: 200,
       checkInDate: "",
       checkOutDate: "",
-      image: room1003, // Utiliser l'image locale
+      image: room1003,
     },
     {
       id: 4,
@@ -889,7 +888,7 @@ const RoomManagement = () => {
       price: 250,
       checkInDate: "",
       checkOutDate: "",
-      image: room1004, // Utiliser l'image locale
+      image: room1004,
     },
     {
       id: 5,
@@ -901,7 +900,7 @@ const RoomManagement = () => {
       price: 200,
       checkInDate: "2023-11-01",
       checkOutDate: "2023-11-05",
-      image: room1005, // Utiliser l'image locale
+      image: room1005,
     },
     {
       id: 6,
@@ -913,7 +912,7 @@ const RoomManagement = () => {
       price: 250,
       checkInDate: "2023-10-20",
       checkOutDate: "2023-10-25",
-      image: room1006, // Utiliser l'image locale
+      image: room1006,
     },
     {
       id: 7,
@@ -925,7 +924,7 @@ const RoomManagement = () => {
       price: 150,
       checkInDate: "",
       checkOutDate: "",
-      image: room1007, // Utiliser l'image locale
+      image: room1007,
     },
     {
       id: 8,
@@ -937,7 +936,7 @@ const RoomManagement = () => {
       price: 100,
       checkInDate: "",
       checkOutDate: "",
-      image: room1008, // Utiliser l'image locale
+      image: room1008,
     },
     {
       id: 9,
@@ -949,21 +948,19 @@ const RoomManagement = () => {
       price: 200,
       checkInDate: "2023-11-10",
       checkOutDate: "2023-11-15",
-      image: room1009, // Utiliser l'image locale
+      image: room1009,
     },
   ]);
 
   const [filter, setFilter] = useState("all");
   const [floorFilter, setFloorFilter] = useState("all");
 
-  // Filtrer les chambres en fonction du statut et de l'étage
   const filteredRooms = rooms.filter((room) => {
     const statusMatch = filter === "all" || room.status === filter;
     const floorMatch = floorFilter === "all" || room.floor === floorFilter;
     return statusMatch && floorMatch;
   });
 
-  // Modifier le statut d'une chambre
   const changeRoomStatus = (id, newStatus, checkInDate = "", checkOutDate = "") => {
     setRooms(
       rooms.map((room) =>
@@ -978,7 +975,6 @@ const RoomManagement = () => {
     <div className="container room-management">
       <h2>Gestion des Chambres</h2>
 
-      {/* Filtres */}
       <div className="filters">
         <div className="form-group">
           <label>Filtrer par statut:</label>
@@ -1008,7 +1004,6 @@ const RoomManagement = () => {
         </div>
       </div>
 
-      {/* Tableau des chambres */}
       <table className="room-table">
         <thead>
           <tr>
@@ -1096,7 +1091,6 @@ const RoomManagement = () => {
     </div>
   );
 };
-
 
 const ClientManagement = () => {
   const [clients, setClients] = useState([
@@ -1315,7 +1309,6 @@ const AdministrativeTasks = () => {
     { id: 4, name: "Coordonner avec le service de ménage", done: false, category: "Ménage", priority: "moyenne" },
     { id: 5, name: "Vérifier les stocks mini-bar", done: false, category: "Stocks", priority: "haute" },
     { id: 6, name: "Planifier les maintenances", done: false, category: "Maintenance", priority: "moyenne" },
-    // Nouvelles tâches ajoutées
     { id: 7, name: "Gérer les plaintes clients", done: false, category: "Assistance client", priority: "haute" },
     { id: 8, name: "Vérifier les équipements", done: false, category: "Maintenance", priority: "moyenne" },
     { id: 9, name: "Coordonner avec le service restauration", done: false, category: "Réservations", priority: "basse" },
@@ -1328,14 +1321,12 @@ const AdministrativeTasks = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
 
-  // Toggle task status (done/undone)
   const toggleTask = (id) => {
     setTasks(tasks.map(task => 
       task.id === id ? { ...task, done: !task.done } : task
     ));
   };
 
-  // Add a new task
   const addTask = () => {
     if (newTask.trim()) {
       setTasks([...tasks, {
@@ -1349,7 +1340,6 @@ const AdministrativeTasks = () => {
     }
   };
 
-  // Filter tasks based on category and priority
   const filteredTasks = tasks.filter(task => {
     const categoryMatch = categoryFilter === "all" || task.category === categoryFilter;
     const priorityMatch = priorityFilter === "all" || task.priority === priorityFilter;
@@ -1360,7 +1350,6 @@ const AdministrativeTasks = () => {
     <div className="container administrative-tasks">
       <h2>Liste des Tâches à Faire (To-Do)</h2>
 
-      {/* Filters */}
       <div className="task-controls">
         <div className="form-group">
           <label>Filtrer par catégorie:</label>
@@ -1394,7 +1383,6 @@ const AdministrativeTasks = () => {
           </select>
         </div>
 
-        {/* Add New Task Form */}
         <div className="add-task">
           <input
             type="text"
@@ -1406,7 +1394,6 @@ const AdministrativeTasks = () => {
         </div>
       </div>
 
-      {/* Task List */}
       <ul className="task-list">
         {filteredTasks.map(task => (
           <li key={task.id} className={task.done ? "done" : ""}>
@@ -1426,6 +1413,7 @@ const AdministrativeTasks = () => {
     </div>
   );
 };
+
 const Statistics = () => {
   const stats = {
     totalReservations: 120,
@@ -1440,60 +1428,10 @@ const Statistics = () => {
     mostPopularRoomType: "Standard",
   };
 
-  // Données pour le graphique d'occupation
-  const occupancyData = {
-    labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
-    datasets: [
-      {
-        label: 'Taux d\'occupation (%)',
-        data: [55, 60, 65, 70, 75, 80, 60],
-        backgroundColor: 'rgba(54, 162, 235, 0.7)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  // Données pour le graphique de revenus
-  const revenueData = {
-    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
-    datasets: [
-      {
-        label: 'Revenus (€)',
-        data: [9500, 10000, 10500, 11000, 11500, 12000, 12500, 13000, 12000, 12500, 13000, 13500],
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 2,
-        tension: 0.4,
-        fill: true,
-      },
-    ],
-  };
-
-  // Options pour les graphiques
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      tooltip: {
-        mode: 'index',
-        intersect: false,
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
-
   return (
     <div className="statistics-container">
+      <h2>Statistiques</h2>
       
-
-      {/* Section des statistiques principales */}
       <div className="statistics-grid">
         <div className="stat-card card-reservations">
           <FaChartBar className="stat-icon" />
@@ -1522,10 +1460,6 @@ const Statistics = () => {
           </div>
         </div>
 
-        
-
-       
-
         <div className="stat-card card-revenue">
           <FaCoins className="stat-icon" />
           <div className="stat-content">
@@ -1536,7 +1470,6 @@ const Statistics = () => {
         </div>
       </div>
 
-      {/* Section des détails supplémentaires */}
       <div className="additional-stats">
         <div className="stat-card detailed">
           <h3>Taux d'occupation</h3>
@@ -1558,8 +1491,6 @@ const Statistics = () => {
           <p>{stats.mostPopularRoomType}</p>
         </div>
       </div>
-
-      
     </div>
   );
 };
@@ -1568,42 +1499,68 @@ const Statistics = () => {
 const ReceptionistDashboard = () => {
   const [activeSection, setActiveSection] = useState("Tableau de Bord");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.endsWith("/welcome")) {
+      setActiveSection("Accueil Clients");
+    } else if (path.endsWith("/authenticate")) {
+      setActiveSection("Authentifier une Réservation");
+    } else if (path.endsWith("/create-reservation")) {
+      setActiveSection("Créer une Réservation");
+    } else if (path.endsWith("/departure")) {
+      setActiveSection("Gestion des Départs");
+    } else if (path.endsWith("/assistance")) {
+      setActiveSection("Assistance Client");
+    } else if (path.endsWith("/room-management")) {
+      setActiveSection("Gestion des Chambres");
+    } else if (path.endsWith("/client-management")) {
+      setActiveSection("Gestion des Clients");
+    } else if (path.endsWith("/administrative")) {
+      setActiveSection("Tâches Administratives");
+    } else if (path.endsWith("/statistics")) {
+      setActiveSection("Statistiques");
+    } else {
+      setActiveSection("Tableau de Bord");
+    }
+  }, [location]);
 
   const handleButtonClick = (buttonName) => {
     setActiveSection(buttonName);
     switch (buttonName) {
       case "Tableau de Bord":
-        navigate("/receptionist");
+        navigate("");
         break;
       case "Accueil Clients":
-        navigate("/receptionist/welcome");
+        navigate("welcome");
         break;
       case "Authentifier une Réservation":
-        navigate("/receptionist/authenticate");
+        navigate("authenticate");
         break;
       case "Créer une Réservation":
-        navigate("/receptionist/create-reservation");
+        navigate("create-reservation");
         break;
       case "Gestion des Départs":
-        navigate("/receptionist/departure");
+        navigate("departure");
         break;
       case "Assistance Client":
-        navigate("/receptionist/assistance");
+        navigate("assistance");
         break;
       case "Gestion des Chambres":
-        navigate("/receptionist/room-management");
+        navigate("room-management");
         break;
       case "Gestion des Clients":
-        navigate("/receptionist/client-management");
+        navigate("client-management");
         break;
       case "Tâches Administratives":
-        navigate("/receptionist/administrative");
+        navigate("administrative");
         break;
       case "Statistiques":
-        navigate("/receptionist/statistics");
+        navigate("statistics");
         break;
       default:
-        navigate("/receptionist");
+        navigate("");
         break;
     }
   };
@@ -1641,16 +1598,16 @@ const ReceptionistDashboard = () => {
         </header>
 
         <Routes>
-          <Route path="/" element={<HomeDashboard />} />
-          <Route path="/welcome" element={<GuestWelcome />} />
-          <Route path="/authenticate" element={<AuthenticateReservation />} />
-          <Route path="/create-reservation" element={<CreateReservation />} />
-          <Route path="/departure" element={<GuestDeparture />} />
-          <Route path="/assistance" element={<GuestAssistance />} />
-          <Route path="/room-management" element={<RoomManagement />} />
-          <Route path="/client-management" element={<ClientManagement />} />
-          <Route path="/administrative" element={<AdministrativeTasks />} />
-          <Route path="/statistics" element={<Statistics />} />
+          <Route index element={<HomeDashboard />} />
+          <Route path="welcome" element={<GuestWelcome />} />
+          <Route path="authenticate" element={<AuthenticateReservation />} />
+          <Route path="create-reservation" element={<CreateReservation />} />
+          <Route path="departure" element={<GuestDeparture />} />
+          <Route path="assistance" element={<GuestAssistance />} />
+          <Route path="room-management" element={<RoomManagement />} />
+          <Route path="client-management" element={<ClientManagement />} />
+          <Route path="administrative" element={<AdministrativeTasks />} />
+          <Route path="statistics" element={<Statistics />} />
         </Routes>
       </div>
     </div>

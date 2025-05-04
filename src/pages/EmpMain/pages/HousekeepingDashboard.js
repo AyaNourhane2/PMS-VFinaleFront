@@ -1,92 +1,117 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { FaTasks, FaClipboardList, FaShoppingCart, FaUserCheck, FaCheck, FaPlus } from "react-icons/fa";
 import profilefemmenage from "../assets/profilefemmemenage.webp";
 import "../Style/housekeeping.css";
+import axios from 'axios';
 
 const HousekeepingDashboard = () => {
   const navigate = useNavigate();
   const [activeButton, setActiveButton] = useState("Tâches de Ménage");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [tasks, setTasks] = useState([
-    { id: 1, room: "101", status: "à nettoyer" },
-    { id: 2, room: "102", status: "en maintenance" },
-    { id: 3, room: "103", status: "utilisé" },
-  ]);
-  const [specialRequests, setSpecialRequests] = useState([
-    { id: 1, room: "101", request: "Nettoyage urgent", status: "en attente" },
-  ]);
+  const [tasks, setTasks] = useState([]);
+  const [specialRequests, setSpecialRequests] = useState([]);
   const [inventoryOrders, setInventoryOrders] = useState([]);
-  const [staff, setStaff] = useState([
-    { id: 1, name: "Jean Dupont", status: "présent", performance: 8 },
-    { id: 2, name: "Marie Curie", status: "absent", performance: 7 },
-  ]);
+  const [staff, setStaff] = useState([]);
   const [newTask, setNewTask] = useState({ room: "", status: "" });
   const [newRequest, setNewRequest] = useState({ room: "", request: "" });
   const [newOrder, setNewOrder] = useState({ product: "", quantity: "" });
   const [newEmployee, setNewEmployee] = useState({ name: "", status: "", performance: "" });
 
-  const updateTaskStatus = (taskId, newStatus) => {
-    setTasks(tasks.map(task => task.id === taskId ? { ...task, status: newStatus } : task));
+  // Chargement initial des données
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const tasksRes = await axios.get('/api/housekeeping');
+        setTasks(tasksRes.data);
+        
+        const requestsRes = await axios.get('/api/special-requests');
+        setSpecialRequests(requestsRes.data);
+        
+        const ordersRes = await axios.get('/api/inventory');
+        setInventoryOrders(ordersRes.data);
+        
+        const staffRes = await axios.get('/api/staff');
+        setStaff(staffRes.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const updateTaskStatus = async (taskId, newStatus) => {
+    try {
+      await axios.put(`/api/housekeeping/${taskId}/status`, { status: newStatus });
+      setTasks(tasks.map(task => task.id === taskId ? { ...task, status: newStatus } : task));
+    } catch (error) {
+      console.error('Error updating task status:', error);
+    }
   };
 
-  const addTask = () => {
+  const addTask = async () => {
     if (newTask.room && newTask.status) {
-      const newTaskEntry = {
-        id: tasks.length + 1,
-        room: newTask.room,
-        status: newTask.status,
-      };
-      setTasks([...tasks, newTaskEntry]);
-      setNewTask({ room: "", status: "" });
+      try {
+        const response = await axios.post('/api/housekeeping', newTask);
+        setTasks([...tasks, response.data]);
+        setNewTask({ room: "", status: "" });
+      } catch (error) {
+        alert("Erreur lors de l'ajout de la tâche");
+      }
     } else {
       alert("Veuillez remplir tous les champs.");
     }
   };
 
-  const addSpecialRequest = () => {
+  const addSpecialRequest = async () => {
     if (newRequest.room && newRequest.request) {
-      const newRequestEntry = {
-        id: specialRequests.length + 1,
-        room: newRequest.room,
-        request: newRequest.request,
-        status: "en attente",
-      };
-      setSpecialRequests([...specialRequests, newRequestEntry]);
-      setNewRequest({ room: "", request: "" });
+      try {
+        const response = await axios.post('/api/special-requests', {
+          ...newRequest,
+          status: "en attente"
+        });
+        setSpecialRequests([...specialRequests, response.data]);
+        setNewRequest({ room: "", request: "" });
+      } catch (error) {
+        alert("Erreur lors de l'ajout de la demande");
+      }
     } else {
       alert("Veuillez remplir tous les champs.");
     }
   };
 
-  const addInventoryOrder = () => {
+  const addInventoryOrder = async () => {
     if (newOrder.product && newOrder.quantity) {
-      const newOrderEntry = {
-        id: inventoryOrders.length + 1,
-        product: newOrder.product,
-        quantity: newOrder.quantity,
-        date: new Date().toISOString().split('T')[0],
-      };
-      setInventoryOrders([...inventoryOrders, newOrderEntry]);
-      setNewOrder({ product: "", quantity: "" });
-      setShowSuccessMessage(true);
-      setTimeout(() => setShowSuccessMessage(false), 3000);
+      try {
+        const response = await axios.post('/api/inventory', {
+          ...newOrder,
+          date: new Date().toISOString().split('T')[0]
+        });
+        setInventoryOrders([...inventoryOrders, response.data]);
+        setNewOrder({ product: "", quantity: "" });
+        setShowSuccessMessage(true);
+        setTimeout(() => setShowSuccessMessage(false), 3000);
+      } catch (error) {
+        alert("Erreur lors de l'envoi de la commande");
+      }
     } else {
       alert("Veuillez remplir tous les champs.");
     }
   };
 
-  const addEmployee = () => {
+  const addEmployee = async () => {
     if (newEmployee.name && newEmployee.status && newEmployee.performance) {
-      const newEmployeeEntry = {
-        id: staff.length + 1,
-        name: newEmployee.name,
-        status: newEmployee.status,
-        performance: parseFloat(newEmployee.performance),
-      };
-      setStaff([...staff, newEmployeeEntry]);
-      setNewEmployee({ name: "", status: "", performance: "" });
+      try {
+        const response = await axios.post('/api/staff', {
+          ...newEmployee,
+          performance: parseFloat(newEmployee.performance)
+        });
+        setStaff([...staff, response.data]);
+        setNewEmployee({ name: "", status: "", performance: "" });
+      } catch (error) {
+        alert("Erreur lors de l'ajout de l'employé");
+      }
     } else {
       alert("Veuillez remplir tous les champs.");
     }
@@ -296,6 +321,9 @@ const HousekeepingDashboard = () => {
                 value={newEmployee.performance}
                 onChange={(e) => setNewEmployee({ ...newEmployee, performance: e.target.value })}
                 className="input"
+                min="0"
+                max="10"
+                step="0.1"
               />
               <button className="button" onClick={addEmployee}>
                 <FaPlus /> Ajouter un employé
