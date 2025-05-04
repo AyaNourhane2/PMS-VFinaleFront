@@ -5,19 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // Composants statiques
 import Navbar from './pages/Admin/components/Navbar';
-import Sidebar from "./pages/EmpMain/components/Sidebar";
 import Header from "./components/Header";
 import Footer from "./components/footer";
-
-// Icônes pour Sidebar
-import { 
-  FaHome, FaCalculator, FaBroom, FaConciergeBell, 
-  FaPlus, FaList, FaInfoCircle, FaUserCog,
-  FaBed, FaCalendarAlt, FaUsers, FaEnvelope,
-  FaCog, FaClipboardList, FaMoneyBillWave,
-  FaFileInvoiceDollar, FaBroom as FaCleaning,
-  FaUserFriends, FaChartLine, FaExchangeAlt
-} from 'react-icons/fa';
 
 // Pages publiques (lazy-loaded)
 const Home = lazy(() => import("./pages/Home"));
@@ -51,35 +40,6 @@ const ServiceDetailsPage = lazy(() => import("./pages/EmpMain/pages/ServiceDetai
 const AdditionalServicesPage = lazy(() => import("./pages/EmpMain/pages/AdditionalServicesPage"));
 
 const App = () => {
-  // Configuration des boutons pour Sidebar employé
-  const employeeSidebarButtons = [
-    { name: 'Accueil', icon: <FaHome />, path: '/employee' },
-    { name: 'Comptabilité', icon: <FaCalculator />, path: '/employee/accounting' },
-    { name: 'Ménage', icon: <FaBroom />, path: '/employee/housekeeping' },
-    { name: 'Réception', icon: <FaConciergeBell />, path: '/employee/receptionist' },
-    { name: 'Services', icon: <FaPlus />, path: '/employee/services' },
-    { name: 'Informations', icon: <FaInfoCircle />, path: '/plus-information' },
-  ];
-
-  // Configuration des boutons pour Admin (optionnel)
-  const adminSidebarButtons = [
-    { name: 'Dashboard', icon: <FaHome />, path: '/admin/dashboard' },
-    { name: 'Gestion Chambres', icon: <FaBed />, path: '/admin/room-management' },
-    { name: 'Réservations', icon: <FaCalendarAlt />, path: '/admin/reservations' },
-    { name: 'Utilisateurs', icon: <FaUsers />, path: '/admin/users' },
-    { name: 'Messages', icon: <FaEnvelope />, path: '/admin/messages' },
-    { name: 'Services', icon: <FaConciergeBell />, path: '/admin/services' },
-    { name: 'Paiements', icon: <FaMoneyBillWave />, path: '/admin/payments' },
-    { name: 'Factures', icon: <FaFileInvoiceDollar />, path: '/admin/invoices' },
-    { name: 'Taxes', icon: <FaCalculator />, path: '/admin/taxes' },
-    { name: 'Nettoyage', icon: <FaCleaning />, path: '/admin/cleaning' },
-    { name: 'Tâches', icon: <FaClipboardList />, path: '/admin/cleaning-tasks' },
-    { name: 'Personnel', icon: <FaUserFriends />, path: '/admin/staff-tracking' },
-    { name: 'Rapports', icon: <FaChartLine />, path: '/admin/reports' },
-    { name: 'Services Compatibles', icon: <FaExchangeAlt />, path: '/admin/compatible-service' },
-    { name: 'Paramètres', icon: <FaCog />, path: '/admin/settings' },
-  ];
-
   const handleLogout = () => {
     localStorage.removeItem('token');
     sessionStorage.removeItem('userData');
@@ -98,19 +58,16 @@ const App = () => {
           
           {/* Routes Admin */}
           <Route path="/admin/*" element={
-            <AdminRoutes 
-              sidebarButtons={adminSidebarButtons} 
-              onLogout={handleLogout} 
-            />
+            <AdminRoutes onLogout={handleLogout} />
           } />
           
-          {/* Routes Employé */}
-          <Route path="/employee/*" element={
-            <EmployeeRoutes 
-              sidebarButtons={employeeSidebarButtons} 
-              onLogout={handleLogout} 
-            />
-          } />
+          {/* Routes Employé - sans sidebar */}
+          <Route path="/employee" element={<HomePagEmployee />} />
+          <Route path="/employee/accounting" element={<AccountingDashboard />} />
+          <Route path="/employee/housekeeping" element={<HousekeepingDashboard />} />
+          <Route path="/employee/receptionist" element={<ReceptionistDashboard />} />
+          <Route path="/employee/services" element={<AdditionalServicesPage />} />
+          <Route path="/employee/services/:serviceId" element={<ServiceDetailsPage />} />
           
           {/* Redirection pour 404 */}
           <Route path="*" element={<Navigate to="/" />} />
@@ -133,7 +90,7 @@ const App = () => {
 };
 
 // Routes Admin
-const AdminRoutes = ({ sidebarButtons, onLogout }) => {
+const AdminRoutes = ({ onLogout }) => {
   const navigate = useNavigate();
   
   return (
@@ -163,99 +120,6 @@ const AdminRoutes = ({ sidebarButtons, onLogout }) => {
           <Route path="/compatible-service" element={<CompatibleService />} />
           <Route path="/reports" element={<Reports />} />
         </Routes>
-      </div>
-    </div>
-  );
-};
-
-// Routes Employé
-const EmployeeRoutes = ({ sidebarButtons, onLogout }) => {
-  const navigate = useNavigate();
-  
-  return (
-    <Routes>
-      {/* Page d'accueil employé */}
-      <Route path="/" element={<HomePagEmployee />} />
-      
-      {/* Tableau de bord comptable */}
-      <Route path="/accounting" element={
-        <WithSidebar 
-          buttons={sidebarButtons} 
-          onButtonClick={(path) => navigate(path)}
-          onLogout={onLogout}
-          activeButton="Comptabilité"
-          profileImage="/assets/profilecomptable.webp"
-          profileName="Comptable"
-          profileRole="Service Comptabilité"
-        >
-          <AccountingDashboard />
-        </WithSidebar>
-      } />
-      
-      {/* Gestion ménage */}
-      <Route path="/housekeeping" element={
-        <WithSidebar 
-          buttons={sidebarButtons} 
-          onButtonClick={(path) => navigate(path)}
-          onLogout={onLogout}
-          activeButton="Ménage"
-          profileImage="/assets/profilefemmemenage.webp"
-          profileName="Agent de Ménage"
-          profileRole="Service Nettoyage"
-        >
-          <HousekeepingDashboard />
-        </WithSidebar>
-      } />
-      
-      {/* Réception */}
-      <Route path="/receptionist" element={
-        <WithSidebar 
-          buttons={sidebarButtons} 
-          onButtonClick={(path) => navigate(path)}
-          onLogout={onLogout}
-          activeButton="Réception"
-          profileImage="/assets/profilereceptioniste.webp"
-          profileName="Réceptionniste"
-          profileRole="Service Réception"
-        >
-          <ReceptionistDashboard />
-        </WithSidebar>
-      } />
-      
-      {/* Liste des services - sans sidebar */}
-      <Route path="/services" element={<AdditionalServicesPage />} />
-      
-      {/* Détails d'un service spécifique - sans sidebar */}
-      <Route path="/services/:serviceId" element={<ServiceDetailsPage />} />
-    </Routes>
-  );
-};
-
-// Composant pour les pages avec Sidebar
-const WithSidebar = ({ 
-  children, 
-  buttons, 
-  onButtonClick,
-  onLogout, 
-  activeButton, 
-  profileImage,
-  profileName,
-  profileRole
-}) => {
-  return (
-    <div className="employee-layout">
-      <Sidebar 
-        buttons={buttons}
-        onButtonClick={onButtonClick}
-        activeButton={activeButton}
-        onLogout={onLogout}
-        dashboardName="Tableau de Bord Employé"
-        profileImage={profileImage}
-        profileName={profileName}
-        profileRole={profileRole}
-      />
-      <div className="employee-content">
-        {children}
       </div>
     </div>
   );

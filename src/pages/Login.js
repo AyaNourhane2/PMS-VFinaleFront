@@ -24,7 +24,7 @@ const Login = () => {
     "RoyelstayAd@gmail.com": {
       password: "RoyelStayA##",
       role: "admin",
-      redirect: "/admin-dashboard",
+      redirect: "/admin",
       message: "Connexion administrateur réussie !"
     }
   };
