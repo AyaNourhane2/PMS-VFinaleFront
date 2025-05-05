@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   FaMoneyCheckAlt,
-  FaFileInvoiceDollar,
   FaReceipt,
   FaPlus,
   FaTrash,
@@ -34,13 +33,11 @@ const AccountingDashboard = () => {
 
   // États pour les données
   const [payments, setPayments] = useState([]);
-  const [invoices, setInvoices] = useState([]);
   const [taxPayments, setTaxPayments] = useState([]);
   const [messages, setMessages] = useState([]);
 
   // États pour les nouveaux éléments
   const [newPayment, setNewPayment] = useState({ clientName: "", totalAmount: "", paymentMethod: "" });
-  const [newInvoice, setNewInvoice] = useState({ clientName: "", amount: "" });
   const [newTax, setNewTax] = useState({ type: "", amount: "" });
   const [newMessage, setNewMessage] = useState("");
 
@@ -57,15 +54,6 @@ const AccountingDashboard = () => {
         setPayments(response.data);
       } catch (error) {
         console.error('Error fetching payments:', error);
-      }
-    };
-
-    const fetchInvoices = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/invoices');
-        setInvoices(response.data);
-      } catch (error) {
-        console.error('Error fetching invoices:', error);
       }
     };
 
@@ -88,7 +76,6 @@ const AccountingDashboard = () => {
     };
 
     fetchPayments();
-    fetchInvoices();
     fetchTaxes();
     fetchMessages();
   }, []);
@@ -109,26 +96,6 @@ const AccountingDashboard = () => {
       } catch (error) {
         console.error('Error adding payment:', error);
         alert('Error adding payment: ' + (error.response?.data?.message || error.message));
-      }
-    } else {
-      alert("Veuillez remplir tous les champs.");
-    }
-  };
-
-  const addInvoice = async () => {
-    if (newInvoice.clientName && newInvoice.amount) {
-      try {
-        const response = await axios.post('http://localhost:5000/api/invoices', {
-          clientName: newInvoice.clientName,
-          amount: parseFloat(newInvoice.amount),
-          status: 'en attente',
-          date: new Date().toISOString().split('T')[0]
-        });
-        setInvoices([...invoices, response.data]);
-        setNewInvoice({ clientName: "", amount: "" });
-      } catch (error) {
-        console.error('Error adding invoice:', error);
-        alert('Error adding invoice: ' + (error.response?.data?.message || error.message));
       }
     } else {
       alert("Veuillez remplir tous les champs.");
@@ -187,16 +154,6 @@ const AccountingDashboard = () => {
     }
   };
 
-  const deleteInvoice = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/api/invoices/${id}`);
-      setInvoices(invoices.filter(invoice => invoice.id !== id));
-    } catch (error) {
-      console.error('Error deleting invoice:', error);
-      alert('Error deleting invoice');
-    }
-  };
-
   const deleteTax = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/api/tax_payments/${id}`);
@@ -204,18 +161,6 @@ const AccountingDashboard = () => {
     } catch (error) {
       console.error('Error deleting tax:', error);
       alert('Error deleting tax');
-    }
-  };
-
-  const updateInvoiceStatus = async (id, newStatus) => {
-    try {
-      await axios.put(`http://localhost:5000/api/invoices/${id}`, { status: newStatus });
-      setInvoices(invoices.map(invoice => 
-        invoice.id === id ? { ...invoice, status: newStatus } : invoice
-      ));
-    } catch (error) {
-      console.error('Error updating invoice status:', error);
-      alert('Error updating invoice status');
     }
   };
 
@@ -261,11 +206,6 @@ const AccountingDashboard = () => {
     (payment.paymentMethod || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredInvoices = invoices.filter(invoice =>
-    (invoice.clientName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (invoice.status || '').toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   const filteredTaxes = taxPayments.filter(tax =>
     (tax.type || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (tax.status || '').toLowerCase().includes(searchTerm.toLowerCase())
@@ -281,7 +221,6 @@ const AccountingDashboard = () => {
       <Sidebar
         buttons={[
           { name: "Payments", icon: <FaMoneyCheckAlt /> },
-          { name: "Invoices", icon: <FaFileInvoiceDollar /> },
           { name: "Taxes", icon: <FaReceipt /> },
           { name: "Messages", icon: <FaEnvelope /> },
         ]}
@@ -314,21 +253,6 @@ const AccountingDashboard = () => {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             totalPages={Math.ceil(filteredPayments.length / itemsPerPage)}
-          />
-        )}
-
-        {activeSection === "invoices" && (
-          <InvoiceSection
-            invoices={paginate(filteredInvoices)}
-            newInvoice={newInvoice}
-            setNewInvoice={setNewInvoice}
-            addInvoice={addInvoice}
-            deleteInvoice={deleteInvoice}
-            updateInvoiceStatus={updateInvoiceStatus}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            totalPages={Math.ceil(filteredInvoices.length / itemsPerPage)}
-            handleExport={() => handleExport(invoices, "invoices")}
           />
         )}
 
@@ -439,95 +363,6 @@ const PaymentSection = ({
       </select>
       <button className="button" onClick={addPayment}>
         <FaPlus /> Ajouter un paiement
-      </button>
-    </div>
-  </section>
-);
-
-// Composant pour la section des factures
-const InvoiceSection = ({
-  invoices,
-  newInvoice,
-  setNewInvoice,
-  addInvoice,
-  deleteInvoice,
-  updateInvoiceStatus,
-  currentPage,
-  setCurrentPage,
-  totalPages,
-  handleExport,
-}) => (
-  <section className="section">
-    <h2 className="heading">Factures</h2>
-    <button className="button export" onClick={handleExport}>
-      <FaFileExport /> Exporter en CSV
-    </button>
-    <table className="table">
-      <thead>
-        <tr>
-          <th>Nom du client</th>
-          <th>Montant</th>
-          <th>Date</th>
-          <th>Statut</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {invoices.map((invoice) => (
-          <tr key={invoice.id}>
-            <td>{invoice.clientName}</td>
-            <td>{invoice.amount} €</td>
-            <td>{invoice.date}</td>
-            <td>
-              <select
-                value={invoice.status}
-                onChange={(e) => updateInvoiceStatus(invoice.id, e.target.value)}
-                className="input"
-              >
-                {STATUS_OPTIONS.map((status, index) => (
-                  <option key={index} value={status}>
-                    {status}
-                  </option>
-                ))}
-              </select>
-            </td>
-            <td>
-              <button className="button danger" onClick={() => deleteInvoice(invoice.id)}>
-                <FaTrash /> Supprimer
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-    <div className="pagination">
-      {Array.from({ length: totalPages }, (_, i) => (
-        <button
-          key={i + 1}
-          onClick={() => setCurrentPage(i + 1)}
-          className={currentPage === i + 1 ? "active" : ""}
-        >
-          {i + 1}
-        </button>
-      ))}
-    </div>
-    <div className="form">
-      <input
-        type="text"
-        placeholder="Nom du client"
-        value={newInvoice.clientName}
-        onChange={(e) => setNewInvoice({ ...newInvoice, clientName: e.target.value })}
-        className="input"
-      />
-      <input
-        type="number"
-        placeholder="Montant"
-        value={newInvoice.amount}
-        onChange={(e) => setNewInvoice({ ...newInvoice, amount: e.target.value })}
-        className="input"
-      />
-      <button className="button" onClick={addInvoice}>
-        <FaPlus /> Ajouter une facture
       </button>
     </div>
   </section>
