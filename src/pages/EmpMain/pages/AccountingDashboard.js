@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -9,6 +9,7 @@ import {
   FaTrash,
   FaFileExport,
   FaSearch,
+  FaEnvelope,
 } from "react-icons/fa";
 import Sidebar from "../components/Sidebar";
 import profilecomptable from "../assets/profilecompatible.webp";
@@ -35,11 +36,13 @@ const AccountingDashboard = () => {
   const [payments, setPayments] = useState([]);
   const [invoices, setInvoices] = useState([]);
   const [taxPayments, setTaxPayments] = useState([]);
+  const [messages, setMessages] = useState([]);
 
   // États pour les nouveaux éléments
-  const [newPayment, setNewPayment] = useState({ client: "", amount: "", paymentMethod: "" });
-  const [newInvoice, setNewInvoice] = useState({ client: "", amount: "" });
+  const [newPayment, setNewPayment] = useState({ clientName: "", totalAmount: "", paymentMethod: "" });
+  const [newInvoice, setNewInvoice] = useState({ clientName: "", amount: "" });
   const [newTax, setNewTax] = useState({ type: "", amount: "" });
+  const [newMessage, setNewMessage] = useState("");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -48,7 +51,9 @@ const AccountingDashboard = () => {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await axios.get('/api/accounting/payments');
+        const response = await axios.get('http://localhost:5000/api/payments', {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token') || ''}` }
+        });
         setPayments(response.data);
       } catch (error) {
         console.error('Error fetching payments:', error);
@@ -57,7 +62,7 @@ const AccountingDashboard = () => {
 
     const fetchInvoices = async () => {
       try {
-        const response = await axios.get('/api/accounting/invoices');
+        const response = await axios.get('http://localhost:5000/api/invoices');
         setInvoices(response.data);
       } catch (error) {
         console.error('Error fetching invoices:', error);
@@ -66,48 +71,44 @@ const AccountingDashboard = () => {
 
     const fetchTaxes = async () => {
       try {
-        const response = await axios.get('/api/accounting/taxes');
+        const response = await axios.get('http://localhost:5000/api/tax_payments');
         setTaxPayments(response.data);
       } catch (error) {
         console.error('Error fetching taxes:', error);
       }
     };
 
+    const fetchMessages = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/messages');
+        setMessages(response.data);
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
+    };
+
     fetchPayments();
     fetchInvoices();
     fetchTaxes();
+    fetchMessages();
   }, []);
 
   const addPayment = async () => {
-    if (newPayment.client && newPayment.amount && newPayment.paymentMethod) {
+    if (newPayment.clientName && newPayment.totalAmount && newPayment.paymentMethod) {
       try {
-        const response = await axios.post('/api/accounting/', {
-          entry_type: 'payment',
-          client_name: newPayment.client,
-          amount: parseFloat(newPayment.amount),
-          payment_method: newPayment.paymentMethod,
-          status: 'pending',
-          created_by: 1 // Replace with actual user ID
+        const response = await axios.post('http://localhost:5000/api/payments', {
+          clientName: newPayment.clientName,
+          totalAmount: parseFloat(newPayment.totalAmount),
+          paymentMethod: newPayment.paymentMethod,
+          paymentDate: new Date().toISOString().split('T')[0]
+        }, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token') || ''}` }
         });
         setPayments([...payments, response.data]);
-        setNewPayment({ client: "", amount: "", paymentMethod: "" });
+        setNewPayment({ clientName: "", totalAmount: "", paymentMethod: "" });
       } catch (error) {
         console.error('Error adding payment:', error);
-        let errorMessage = 'Unknown error';
-        if (error.response) {
-          if (error.response.data && error.response.data.error) {
-            errorMessage = error.response.data.error;
-          } else if (error.response.data && error.response.data.message) {
-            errorMessage = error.response.data.message;
-          } else {
-            errorMessage = error.response.statusText;
-          }
-        } else if (error.request) {
-          errorMessage = error.request.statusText;
-        } else {
-          errorMessage = error.message;
-        }
-        alert(`Error adding payment: ${errorMessage}`);
+        alert('Error adding payment: ' + (error.response?.data?.message || error.message));
       }
     } else {
       alert("Veuillez remplir tous les champs.");
@@ -115,34 +116,19 @@ const AccountingDashboard = () => {
   };
 
   const addInvoice = async () => {
-    if (newInvoice.client && newInvoice.amount) {
+    if (newInvoice.clientName && newInvoice.amount) {
       try {
-        const response = await axios.post('/api/accounting/', {
-          entry_type: 'invoice',
-          client_name: newInvoice.client,
+        const response = await axios.post('http://localhost:5000/api/invoices', {
+          clientName: newInvoice.clientName,
           amount: parseFloat(newInvoice.amount),
           status: 'en attente',
-          created_by: 1 // Replace with actual user ID
+          date: new Date().toISOString().split('T')[0]
         });
         setInvoices([...invoices, response.data]);
-        setNewInvoice({ client: "", amount: "" });
+        setNewInvoice({ clientName: "", amount: "" });
       } catch (error) {
         console.error('Error adding invoice:', error);
-        let errorMessage = 'Unknown error';
-        if (error.response) {
-          if (error.response.data && error.response.data.error) {
-            errorMessage = error.response.data.error;
-          } else if (error.response.data && error.response.data.message) {
-            errorMessage = error.response.data.message;
-          } else {
-            errorMessage = error.response.statusText;
-          }
-        } else if (error.request) {
-          errorMessage = error.request.statusText;
-        } else {
-          errorMessage = error.message;
-        }
-        alert(`Error adding invoice: ${errorMessage}`);
+        alert('Error adding invoice: ' + (error.response?.data?.message || error.message));
       }
     } else {
       alert("Veuillez remplir tous les champs.");
@@ -152,41 +138,48 @@ const AccountingDashboard = () => {
   const addTax = async () => {
     if (newTax.type && newTax.amount) {
       try {
-        const response = await axios.post('/api/accounting/', {
-          entry_type: 'tax',
+        const response = await axios.post('http://localhost:5000/api/tax_payments', {
           type: newTax.type,
           amount: parseFloat(newTax.amount),
-          status: 'en attente',
-          created_by: 1 // Replace with actual user ID
+          date: new Date().toISOString().split('T')[0],
+          status: 'en attente'
         });
         setTaxPayments([...taxPayments, response.data]);
         setNewTax({ type: "", amount: "" });
       } catch (error) {
         console.error('Error adding tax:', error);
-        let errorMessage = 'Unknown error';
-        if (error.response) {
-          if (error.response.data && error.response.data.error) {
-            errorMessage = error.response.data.error;
-          } else if (error.response.data && error.response.data.message) {
-            errorMessage = error.response.data.message;
-          } else {
-            errorMessage = error.response.statusText;
-          }
-        } else if (error.request) {
-          errorMessage = error.request.statusText;
-        } else {
-          errorMessage = error.message;
-        }
-        alert(`Error adding tax: ${errorMessage}`);
+        alert('Error adding tax: ' + (error.response?.data?.message || error.message));
       }
     } else {
       alert("Veuillez remplir tous les champs.");
     }
   };
 
+  const addMessage = async () => {
+    if (newMessage.trim()) {
+      try {
+        const response = await axios.post('http://localhost:5000/api/messages', {
+          sender: "User",
+          recipient: "Receptionist",
+          content: newMessage,
+          timestamp: new Date().toISOString().slice(0, 16).replace("T", " ")
+        });
+        setMessages([...messages, response.data]);
+        setNewMessage("");
+      } catch (error) {
+        console.error('Error adding message:', error);
+        alert('Error adding message: ' + (error.response?.data?.message || error.message));
+      }
+    } else {
+      alert("Veuillez entrer un message.");
+    }
+  };
+
   const deletePayment = async (id) => {
     try {
-      await axios.delete(`/api/accounting/${id}`);
+      await axios.delete(`http://localhost:5000/api/payments/${id}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token') || ''}` }
+      });
       setPayments(payments.filter(payment => payment.id !== id));
     } catch (error) {
       console.error('Error deleting payment:', error);
@@ -196,7 +189,7 @@ const AccountingDashboard = () => {
 
   const deleteInvoice = async (id) => {
     try {
-      await axios.delete(`/api/accounting/${id}`);
+      await axios.delete(`http://localhost:5000/api/invoices/${id}`);
       setInvoices(invoices.filter(invoice => invoice.id !== id));
     } catch (error) {
       console.error('Error deleting invoice:', error);
@@ -206,7 +199,7 @@ const AccountingDashboard = () => {
 
   const deleteTax = async (id) => {
     try {
-      await axios.delete(`/api/accounting/${id}`);
+      await axios.delete(`http://localhost:5000/api/tax_payments/${id}`);
       setTaxPayments(taxPayments.filter(tax => tax.id !== id));
     } catch (error) {
       console.error('Error deleting tax:', error);
@@ -216,7 +209,7 @@ const AccountingDashboard = () => {
 
   const updateInvoiceStatus = async (id, newStatus) => {
     try {
-      await axios.patch(`/api/accounting/${id}/status`, { status: newStatus });
+      await axios.put(`http://localhost:5000/api/invoices/${id}`, { status: newStatus });
       setInvoices(invoices.map(invoice => 
         invoice.id === id ? { ...invoice, status: newStatus } : invoice
       ));
@@ -228,7 +221,7 @@ const AccountingDashboard = () => {
 
   const updateTaxStatus = async (id, newStatus) => {
     try {
-      await axios.patch(`/api/accounting/${id}/status`, { status: newStatus });
+      await axios.put(`http://localhost:5000/api/tax_payments/${id}`, { status: newStatus });
       setTaxPayments(taxPayments.map(tax => 
         tax.id === id ? { ...tax, status: newStatus } : tax
       ));
@@ -240,7 +233,7 @@ const AccountingDashboard = () => {
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset à la première page lors d'une nouvelle recherche
+    setCurrentPage(1);
   };
 
   const paginate = (items) => {
@@ -260,22 +253,27 @@ const AccountingDashboard = () => {
 
   const handleLogout = () => {
     alert("Déconnexion réussie");
-    navigate("/employee"); // Rediriger vers la page d'accueil
+    navigate("/employee");
   };
 
   const filteredPayments = payments.filter(payment =>
-    payment.client_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    payment.payment_method.toLowerCase().includes(searchTerm.toLowerCase())
+    (payment.clientName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (payment.paymentMethod || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const filteredInvoices = invoices.filter(invoice =>
-    invoice.client_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    invoice.status.toLowerCase().includes(searchTerm.toLowerCase())
+    (invoice.clientName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (invoice.status || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const filteredTaxes = taxPayments.filter(tax =>
-    tax.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    tax.status.toLowerCase().includes(searchTerm.toLowerCase())
+    (tax.type || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (tax.status || '').toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredMessages = messages.filter(message =>
+    (message.sender || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (message.content || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -285,6 +283,7 @@ const AccountingDashboard = () => {
           { name: "Payments", icon: <FaMoneyCheckAlt /> },
           { name: "Invoices", icon: <FaFileInvoiceDollar /> },
           { name: "Taxes", icon: <FaReceipt /> },
+          { name: "Messages", icon: <FaEnvelope /> },
         ]}
         onButtonClick={(buttonName) => setActiveSection(buttonName.toLowerCase().replace(/ /g, "_"))}
         activeButton={activeSection}
@@ -347,6 +346,15 @@ const AccountingDashboard = () => {
             handleExport={() => handleExport(taxPayments, "taxes")}
           />
         )}
+
+        {activeSection === "messages" && (
+          <MessageSection
+            messages={filteredMessages}
+            newMessage={newMessage}
+            setNewMessage={setNewMessage}
+            addMessage={addMessage}
+          />
+        )}
       </div>
     </div>
   );
@@ -378,10 +386,10 @@ const PaymentSection = ({
       <tbody>
         {payments.map((payment) => (
           <tr key={payment.id}>
-            <td>{payment.client_name}</td>
-            <td>{payment.amount} €</td>
-            <td>{payment.date}</td>
-            <td>{payment.payment_method}</td>
+            <td>{payment.clientName}</td>
+            <td>{payment.totalAmount} €</td>
+            <td>{payment.paymentDate}</td>
+            <td>{payment.paymentMethod}</td>
             <td>
               <button className="button danger" onClick={() => deletePayment(payment.id)}>
                 <FaTrash /> Supprimer
@@ -406,15 +414,15 @@ const PaymentSection = ({
       <input
         type="text"
         placeholder="Nom du client"
-        value={newPayment.client}
-        onChange={(e) => setNewPayment({ ...newPayment, client: e.target.value })}
+        value={newPayment.clientName}
+        onChange={(e) => setNewPayment({ ...newPayment, clientName: e.target.value })}
         className="input"
       />
       <input
         type="number"
         placeholder="Montant"
-        value={newPayment.amount}
-        onChange={(e) => setNewPayment({ ...newPayment, amount: e.target.value })}
+        value={newPayment.totalAmount}
+        onChange={(e) => setNewPayment({ ...newPayment, totalAmount: e.target.value })}
         className="input"
       />
       <select
@@ -451,6 +459,9 @@ const InvoiceSection = ({
 }) => (
   <section className="section">
     <h2 className="heading">Factures</h2>
+    <button className="button export" onClick={handleExport}>
+      <FaFileExport /> Exporter en CSV
+    </button>
     <table className="table">
       <thead>
         <tr>
@@ -464,7 +475,7 @@ const InvoiceSection = ({
       <tbody>
         {invoices.map((invoice) => (
           <tr key={invoice.id}>
-            <td>{invoice.client_name}</td>
+            <td>{invoice.clientName}</td>
             <td>{invoice.amount} €</td>
             <td>{invoice.date}</td>
             <td>
@@ -504,8 +515,8 @@ const InvoiceSection = ({
       <input
         type="text"
         placeholder="Nom du client"
-        value={newInvoice.client}
-        onChange={(e) => setNewInvoice({ ...newInvoice, client: e.target.value })}
+        value={newInvoice.clientName}
+        onChange={(e) => setNewInvoice({ ...newInvoice, clientName: e.target.value })}
         className="input"
       />
       <input
@@ -537,6 +548,9 @@ const TaxSection = ({
 }) => (
   <section className="section">
     <h2 className="heading">Taxes</h2>
+    <button className="button export" onClick={handleExport}>
+      <FaFileExport /> Exporter en CSV
+    </button>
     <table className="table">
       <thead>
         <tr>
@@ -607,5 +621,99 @@ const TaxSection = ({
     </div>
   </section>
 );
+
+// Composant pour la section des messages
+const MessageSection = ({
+  messages,
+  newMessage,
+  setNewMessage,
+  addMessage,
+}) => {
+  const [selectedContact, setSelectedContact] = useState("Receptionist");
+  const chatEndRef = useRef(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      addMessage();
+    }
+  };
+
+  return (
+    <section className="section chat-section">
+      <h2 className="heading">Messages</h2>
+      <div className="chat-container">
+        <div className="contact-list">
+          <div
+            className={`contact ${selectedContact === "Receptionist" ? "active" : ""}`}
+            onClick={() => setSelectedContact("Receptionist")}
+          >
+            <img
+              src={profilecomptable}
+              alt="Receptionist"
+              className="contact-avatar"
+            />
+            <div className="contact-info">
+              <div className="contact-name">Receptionist</div>
+              <div className="contact-status">Active Now</div>
+            </div>
+          </div>
+        </div>
+        <div className="chat-area">
+          <div className="chat-header">
+            <img
+              src={profilecomptable}
+              alt="Receptionist"
+              className="chat-avatar"
+            />
+            <div className="chat-info">
+              <div className="chat-name">Receptionist</div>
+              <div className="chat-status">Active Now</div>
+            </div>
+          </div>
+          <div className="chat-messages">
+            {messages
+              .filter(
+                (msg) =>
+                  (msg.sender === "User" && msg.recipient === selectedContact) ||
+                  (msg.sender === selectedContact && msg.recipient === "User")
+              )
+              .map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`message ${
+                    msg.sender === "User" ? "message-outgoing" : "message-incoming"
+                  }`}
+                >
+                  <div className="message-bubble">
+                    {msg.content}
+                    <div className="message-timestamp">{msg.timestamp}</div>
+                  </div>
+                </div>
+              ))}
+            <div ref={chatEndRef} />
+          </div>
+          <div className="chat-input">
+            <textarea
+              placeholder="Type a message"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="input message-input"
+              rows="1"
+            />
+            <button className="button send-button" onClick={addMessage}>
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 export default AccountingDashboard;
