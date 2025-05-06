@@ -1538,3 +1538,184 @@ body {
   outline: none; /* Supprime le contour par défaut */
   border: 2px solid #ff5722; /* Bordure orange lorsqu'on clique */
 }
+.messages {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.message.receptionist {
+  background-color: #f0f8ff;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.message.admin {
+  background-color: #fffacd;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.message-input {
+  display: flex;
+  gap: 10px;
+}
+
+.message-input input {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.message-input button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.reservation-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.reservation-table th,
+.reservation-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.reservation-table th {
+  background-color: #f4f4f4;
+}
+
+.btn.approve {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn.reject {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+/* Styles pour la page des demandes de réservation */
+.reservation-requests {
+  padding: 20px;
+}
+
+.filter-controls {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-controls label {
+  font-weight: bold;
+}
+
+.filter-controls select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.requests-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.request-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.request-card.en-attente {
+  border-left: 4px solid #FFA500;
+}
+
+.request-card.approuvée {
+  border-left: 4px solid #4CAF50;
+}
+
+.request-card.rejetée {
+  border-left: 4px solid #F44336;
+}
+
+.request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.status-badge.en-attente {
+  background-color: #FFF3E0;
+  color: #E65100;
+}
+
+.status-badge.approuvée {
+  background-color: #E8F5E9;
+  color: #2E7D32;
+}
+
+.status-badge.rejetée {
+  background-color: #FFEBEE;
+  color: #C62828;
+}
+
+.detail-group {
+  margin-bottom: 10px;
+}
+
+.detail-group label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 3px;
+  color: #555;
+}
+
+.request-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.btn.approve {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.btn.reject {
+  background-color: #F44336;
+  color: white;
+}

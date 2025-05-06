@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-undef */
-import React, { useState, useEffect } from "react";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import room1001 from "../assets/room1001.png";
 import room1002 from "../assets/room1002.png";
 import room1003 from "../assets/room1003.png";
@@ -16,15 +16,21 @@ import {
   FaSignOutAlt, 
   FaBed, 
   FaUsers, 
-  FaChartLine,
+ 
   FaUserCheck,
-  FaQuestionCircle,
+ 
   FaClipboardList,
   FaHome,
-  FaChartBar,
+  FaChartBar, // Add this line
   FaCoins, 
+  FaComments,
+  
 } from "react-icons/fa";
 import profilereceptioniste from "../assets/profilereceptioniste.webp";
+import admin from "../assets/admin.jpg";
+import menage from "../assets/menage.jpg";
+import compatible from "../assets/compatible.jpg";
+
 
 import "../components/sidebar.css";
 import "../Style/receptioniste.css";
@@ -136,22 +142,10 @@ const HomeDashboard = () => {
           </table>
         </div>
 
-        <div className="quick-actions">
-          <h3>Actions Rapides</h3>
-          <div className="action-buttons">
-            <button className="btn" onClick={handleCheckArrivals}>
-              Vérifier les arrivées
-            </button>
-            <button className="btn" onClick={handleCheckDepartures}>
-              Vérifier les départs
-            </button>
-            <button className="btn" onClick={handleViewAvailableRooms}>
-              Voir les chambres disponibles
-            </button>
-          </div>
+        
         </div>
       </div>
-    </div>
+   
   );
 };
 
@@ -189,159 +183,149 @@ const GuestWelcome = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Logique pour enregistrer l'arrivée du client
     alert(`Client ${guestInfo.name} enregistré dans la chambre ${roomAssignment.roomNumber}!`);
   };
 
+  
+};
+// Composant ReservationRequests
+const ReservationRequests = () => {
+  const [requests, setRequests] = useState([
+    {
+      id: 1,
+      guestName: "Jean Dupont",
+      checkInDate: "2023-11-15",
+      checkOutDate: "2023-11-20",
+      roomType: "Chambre Standard",
+      guests: 2,
+      specialRequests: "Lit bébé nécessaire",
+      status: "En attente",
+      submittedAt: "2023-11-01 14:30"
+    },
+    {
+      id: 2,
+      guestName: "Marie Martin",
+      checkInDate: "2023-11-18",
+      checkOutDate: "2023-11-22",
+      roomType: "Suite Deluxe",
+      guests: 4,
+      specialRequests: "Anniversaire de mariage",
+      status: "En attente",
+      submittedAt: "2023-11-02 09:15"
+    },
+    {
+      id: 3,
+      guestName: "Pierre Lambert",
+      checkInDate: "2023-12-05",
+      checkOutDate: "2023-12-10",
+      roomType: "Chambre Familiale",
+      guests: 5,
+      specialRequests: "",
+      status: "Approuvée",
+      submittedAt: "2023-10-30 16:45"
+    }
+  ]);
+
+  const [filter, setFilter] = useState("all");
+
+  const filteredRequests = requests.filter(request => {
+    if (filter === "all") return true;
+    return request.status === filter;
+  });
+
+  const handleApprove = (id) => {
+    setRequests(requests.map(request => 
+      request.id === id ? { ...request, status: "Approuvée" } : request
+    ));
+  };
+
+  const handleReject = (id) => {
+    setRequests(requests.map(request => 
+      request.id === id ? { ...request, status: "Rejetée" } : request
+    ));
+  };
+
   return (
-    <div className="container guest-welcome">
-      <h2>Accueil des Clients</h2>
+    <div className="container reservation-requests">
+      <h2>Demandes de Réservation</h2>
       
-      <form onSubmit={handleSubmit}>
-        {step === 1 && (
-          <div className="form-step">
-            <h3>Étape 1: Informations client</h3>
-            <div className="form-group">
-              <label>Nom complet du client</label>
-              <input
-                type="text"
-                name="name"
-                value={guestInfo.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Numéro de réservation</label>
-              <input
-                type="text"
-                name="reservationNumber"
-                value={guestInfo.reservationNumber}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Numéro de pièce d'identité/passeport</label>
-              <input
-                type="text"
-                name="idNumber"
-                value={guestInfo.idNumber}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Adresse</label>
-              <input
-                type="text"
-                name="address"
-                value={guestInfo.address}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Préférences de chambre</label>
-              <input
-                type="text"
-                name="roomPreference"
-                value={guestInfo.roomPreference}
-                onChange={handleChange}
-                placeholder="Étage, vue, lit double, etc."
-              />
-            </div>
-            <div className="form-group">
-              <label>Demandes spéciales</label>
-              <textarea
-                name="specialRequests"
-                value={guestInfo.specialRequests}
-                onChange={handleChange}
-                rows="3"
-              ></textarea>
-            </div>
-            <div className="form-actions">
-              <button type="button" className="btn" onClick={nextStep}>Suivant</button>
-            </div>
-          </div>
-        )}
+      <div className="filter-controls">
+        <label>Filtrer par statut :</label>
+        <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+          <option value="all">Toutes</option>
+          <option value="En attente">En attente</option>
+          <option value="Approuvée">Approuvées</option>
+          <option value="Rejetée">Rejetées</option>
+        </select>
+      </div>
 
-        {step === 2 && (
-          <div className="form-step">
-            <h3>Étape 2: Attribution de chambre</h3>
-            <div className="form-group">
-              <label>Numéro de chambre</label>
-              <input
-                type="text"
-                name="roomNumber"
-                value={roomAssignment.roomNumber}
-                onChange={handleRoomChange}
-                required
-              />
+      <div className="requests-list">
+        {filteredRequests.map(request => (
+          <div key={request.id} className={`request-card ${request.status.toLowerCase()}`}>
+            <div className="request-header">
+              <h3>Demande #{request.id}</h3>
+              <span className={`status-badge ${request.status.toLowerCase()}`}>
+                {request.status}
+              </span>
             </div>
-            <div className="form-group">
-              <label>Étage</label>
-              <input
-                type="text"
-                name="floor"
-                value={roomAssignment.floor}
-                onChange={handleRoomChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Type de chambre</label>
-              <select
-                name="roomType"
-                value={roomAssignment.roomType}
-                onChange={handleRoomChange}
-                required
-              >
-                <option value="">Sélectionner</option>
-                <option value="Standard">Standard</option>
-                <option value="Deluxe">Deluxe</option>
-                <option value="Suite">Suite</option>
-                <option value="Familiale">Familiale</option>
-              </select>
-            </div>
-            <div className="form-actions">
-              <button type="button" className="btn secondary" onClick={prevStep}>Précédent</button>
-              <button type="button" className="btn" onClick={nextStep}>Suivant</button>
-            </div>
-          </div>
-        )}
-
-        {step === 3 && (
-          <div className="form-step">
-            <h3>Étape 3: Confirmation</h3>
-            <div className="confirmation-details">
-              <h4>Informations client</h4>
-              <p><strong>Nom:</strong> {guestInfo.name}</p>
-              <p><strong>Réservation:</strong> {guestInfo.reservationNumber}</p>
-              <p><strong>ID:</strong> {guestInfo.idNumber}</p>
+            
+            <div className="request-details">
+              <div className="detail-group">
+                <label>Client :</label>
+                <p>{request.guestName}</p>
+              </div>
               
-              <h4>Attribution de chambre</h4>
-              <p><strong>Chambre:</strong> {roomAssignment.roomNumber}</p>
-              <p><strong>Étage:</strong> {roomAssignment.floor}</p>
-              <p><strong>Type:</strong> {roomAssignment.roomType}</p>
+              <div className="detail-group">
+                <label>Dates :</label>
+                <p>Du {request.checkInDate} au {request.checkOutDate}</p>
+              </div>
               
-              <h4>Services inclus</h4>
-              <ul>
-                <li>Petit-déjeuner buffet (7h-10h)</li>
-                <li>Accès à la piscine</li>
-                <li>Wi-Fi gratuit</li>
-              </ul>
+              <div className="detail-group">
+                <label>Type de chambre :</label>
+                <p>{request.roomType}</p>
+              </div>
+              
+              <div className="detail-group">
+                <label>Nombre de personnes :</label>
+                <p>{request.guests}</p>
+              </div>
+              
+              {request.specialRequests && (
+                <div className="detail-group">
+                  <label>Demandes spéciales :</label>
+                  <p>{request.specialRequests}</p>
+                </div>
+              )}
+              
+              <div className="detail-group">
+                <label>Soumise le :</label>
+                <p>{request.submittedAt}</p>
+              </div>
             </div>
-            <div className="form-actions">
-              <button type="button" className="btn secondary" onClick={prevStep}>Précédent</button>
-              <button type="submit" className="btn">Finaliser l'enregistrement</button>
-            </div>
+            
+            {request.status === "En attente" && (
+              <div className="request-actions">
+                <button 
+                  className="btn approve" 
+                  onClick={() => handleApprove(request.id)}
+                >
+                  Accepter
+                </button>
+                <button 
+                  className="btn reject" 
+                  onClick={() => handleReject(request.id)}
+                >
+                  Refuser
+                </button>
+              </div>
+            )}
           </div>
-        )}
-      </form>
+        ))}
+      </div>
     </div>
   );
 };
-
 // Composant AuthenticateReservation
 const AuthenticateReservation = () => {
   const [reservationNumber, setReservationNumber] = useState("");
@@ -417,39 +401,67 @@ const AuthenticateReservation = () => {
 const CreateReservation = () => {
   const [reservation, setReservation] = useState({
     reservationNumber: "",
-    guestName: "",
     checkInDate: "",
     checkOutDate: "",
-    roomType: "",
+    guestName: "",
     email: "",
+    country: "",
     phoneNumber: "",
-    numberOfGuests: 1,
-    specialRequests: "",
+    address: "",
+    documentType: "passport",
+    documentNumber: "",
+    specialRequests: { babyBed: false, highFloor: false, other: "" },
+    additionalServices: { gym: false, spa: false, restaurant: false, emergency: false },
+    paymentMethod: "",
+    cardNumber: "",
+    expiryDate: "",
+    cvv: ""
   });
 
   const [message, setMessage] = useState("");
+  const [step, setStep] = useState(1);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setReservation({ ...reservation, [name]: value });
+    if (name in reservation.specialRequests || name in reservation.additionalServices) {
+      setReservation(prev => ({
+        ...prev,
+        [name.includes("special") ? "specialRequests" : "additionalServices"]: {
+          ...prev[name.includes("special") ? "specialRequests" : "additionalServices"],
+          [name]: value === "on" ? !prev[name.includes("special") ? "specialRequests" : "additionalServices"][name] : value
+        }
+      }));
+    } else {
+      setReservation({ ...reservation, [name]: value });
+    }
   };
+
+  const nextStep = () => setStep(step + 1);
+  const prevStep = () => setStep(step - 1);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Simuler une création de réservation
       setMessage("Réservation créée avec succès !");
       setReservation({
         reservationNumber: "",
-        guestName: "",
         checkInDate: "",
         checkOutDate: "",
-        roomType: "",
+        guestName: "",
         email: "",
+        country: "",
         phoneNumber: "",
-        numberOfGuests: 1,
-        specialRequests: "",
+        address: "",
+        documentType: "passport",
+        documentNumber: "",
+        specialRequests: { babyBed: false, highFloor: false, other: "" },
+        additionalServices: { gym: false, spa: false, restaurant: false, emergency: false },
+        paymentMethod: "",
+        cardNumber: "",
+        expiryDate: "",
+        cvv: ""
       });
+      setStep(1);
     } catch (err) {
       setMessage("Erreur lors de la création de la réservation.");
     }
@@ -459,108 +471,249 @@ const CreateReservation = () => {
     <div className="form-container">
       <h2>Créer une Nouvelle Réservation</h2>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Numéro de réservation</label>
-          <input
-            type="text"
-            name="reservationNumber"
-            value={reservation.reservationNumber}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Nom du client</label>
-          <input
-            type="text"
-            name="guestName"
-            value={reservation.guestName}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Date d'arrivée</label>
-          <input
-            type="date"
-            name="checkInDate"
-            value={reservation.checkInDate}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Date de départ</label>
-          <input
-            type="date"
-            name="checkOutDate"
-            value={reservation.checkOutDate}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Type de chambre</label>
-          <select
-            name="roomType"
-            value={reservation.roomType}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Sélectionnez un type de chambre</option>
-            <option value="Chambre Standard">Chambre Standard</option>
-            <option value="Suite Deluxe">Suite Deluxe</option>
-            <option value="Chambre Familiale">Chambre Familiale</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            value={reservation.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Numéro de téléphone</label>
-          <input
-            type="text"
-            name="phoneNumber"
-            value={reservation.phoneNumber}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Nombre de personnes</label>
-          <input
-            type="number"
-            name="numberOfGuests"
-            value={reservation.numberOfGuests}
-            onChange={handleChange}
-            min="1"
-            max="30"
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Commentaires ou demandes spéciales</label>
-          <textarea
-            name="specialRequests"
-            value={reservation.specialRequests}
-            onChange={handleChange}
-            rows="4"
-          ></textarea>
-        </div>
-        <button type="submit" className="btn">Créer la Réservation</button>
+        {step === 1 && (
+          <div className="form-step">
+            <h3>Étape 1: Sélection des dates</h3>
+            <div className="form-group">
+              <label>Date d'arrivée</label>
+              <input
+                type="date"
+                name="checkInDate"
+                value={reservation.checkInDate}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Date de départ</label>
+              <input
+                type="date"
+                name="checkOutDate"
+                value={reservation.checkOutDate}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-actions">
+              <button type="button" className="btn" onClick={nextStep}>Suivant</button>
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="form-step">
+            <h3>Étape 2: Informations personnelles</h3>
+            <div className="form-group">
+              <label>Nom du client</label>
+              <input
+                type="text"
+                name="guestName"
+                value={reservation.guestName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Prenom du client</label>
+              <input
+                type="text"
+                name="guestName"
+                value={reservation.guestName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                value={reservation.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Pays</label>
+              <input
+                type="text"
+                name="country"
+                value={reservation.country}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Numéro de téléphone</label>
+              <input
+                type="text"
+                name="phoneNumber"
+                value={reservation.phoneNumber}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Adresse d'habitat</label>
+              <input
+                type="text"
+                name="address"
+                value={reservation.address}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Type de document</label>
+              <select
+                name="documentType"
+                value={reservation.documentType}
+                onChange={handleChange}
+                required
+              >
+                <option value="passport">Passeport</option>
+                <option value="nationalId">Carte Nationale</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Numéro du document</label>
+              <input
+                type="text"
+                name="documentNumber"
+                value={reservation.documentNumber}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Demandes spéciales</label>
+              <div>
+              <label><input type="checkbox" name="gym" checked={reservation.additionalServices.gym} onChange={handleChange} /> Lit bébé</label>
+              <label><input type="checkbox" name="spa" checked={reservation.additionalServices.spa} onChange={handleChange} /> Etage élevé</label>
+              <label>Autre</label>
+              <input
+                type="text"
+                name="autre"
+                value={reservation.autre}
+                onChange={handleChange}
+                required
+              />
+              </div>
+            </div>
+            <div className="form-actions">
+              <button type="button" className="btn secondary" onClick={prevStep}>Précédent</button>
+              <button type="button" className="btn" onClick={nextStep}>Suivant</button>
+            </div>
+          </div>
+        )}
+
+{step === 3 && (
+          <div className="form-step">
+            <h3>Étape 3: Services additionnels</h3>
+            <div className="form-group">
+              <h3>GYM</h3>
+              <div>
+                <label><input type="radio" name="gym" value="cardio" checked={reservation.additionalServices.gym === "cardio"} onChange={handleChange} /> Cardio Training (6H-22H)</label>
+                <label><input type="radio" name="gym" value="muscu" checked={reservation.additionalServices.gym === "muscu"} onChange={handleChange} /> Musculation (7H-21H)</label>
+                <label><input type="radio" name="gym" value="yoga" checked={reservation.additionalServices.gym === "yoga"} onChange={handleChange} /> Yoga (8H-20H)</label>
+              </div>
+            </div>
+            <div className="form-group">
+            <h3>SPA</h3>
+              <div>
+                <label><input type="radio" name="spa" value="massage" checked={reservation.additionalServices.spa === "massage"} onChange={handleChange} /> Massage (10H-20H)</label>
+                <label><input type="radio" name="spa" value="face" checked={reservation.additionalServices.spa === "face"} onChange={handleChange} /> Soins de visage (9H-18H)</label>
+                <label><input type="radio" name="spa" value="feet" checked={reservation.additionalServices.spa === "feet"} onChange={handleChange} /> Soins des pieds (11H-19H)</label>
+              </div>
+            </div>
+            <div className="form-group">
+            <h3>RESTAURATION</h3>              <div>
+                <label><input type="radio" name="restaurant" value="breakfast" checked={reservation.additionalServices.restaurant === "breakfast"} onChange={handleChange} /> Petit déjeuner (1493.40 DA)</label>
+                <label><input type="radio" name="restaurant" value="restaurant" checked={reservation.additionalServices.restaurant === "restaurant"} onChange={handleChange} /> Restaurant (1493.40 DA)</label>
+                <label><input type="radio" name="restaurant" value="cafeteria" checked={reservation.additionalServices.restaurant === "cafeteria"} onChange={handleChange} /> Cafeteria (1493.40 DA)</label>
+              </div>
+            </div>
+            
+            <div className="form-actions">
+              <button type="button" className="btn secondary" onClick={prevStep}>Précédent</button>
+              <button type="button" className="btn" onClick={nextStep}>Suivant</button>
+            </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div className="form-step">
+            <h3>Étape 4: Mode de paiement</h3>
+            <div className="form-group">
+              <label>Mode de paiement</label>
+              <select
+                name="paymentMethod"
+                value={reservation.paymentMethod}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Sélectionnez un mode</option>
+                <option value="card">Carte bancaire</option>
+                <option value="transfer">Virement</option>
+                <option value="check">Chèque</option>
+              </select>
+            </div>
+            {reservation.paymentMethod === "card" && (
+              <>
+                <div className="form-group">
+                  <label>Numéro de carte</label>
+                  <input
+                    type="text"
+                    name="cardNumber"
+                    value={reservation.cardNumber}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+              <label>Date d'expiration</label>
+              <input
+                type="date"
+                name="checkInDate"
+                value={reservation.checkInDate}
+                onChange={handleChange}
+                required
+              />
+                </div>
+                <div className="form-group">
+                  <label>Cryptogramme visuel (CVV)</label>
+                  <input
+                    type="text"
+                    name="cvv"
+                    value={reservation.cvv}
+                    onChange={handleChange}
+                    required
+                    maxLength="4"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>nom du titulaire de la carte</label>
+                  <input
+                    type="text"
+                    name="cardNumber"
+                    value={reservation.cardNumber}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </>
+            )}
+            <div className="form-actions">
+              <button type="button" className="btn secondary" onClick={prevStep}>Précédent</button>
+              <button type="submit" className="btn">Finaliser la Réservation</button>
+            </div>
+          </div>
+        )}
       </form>
       {message && <p className="message success">{message}</p>}
     </div>
   );
-};
-
+}
 // Composant GuestDeparture
 const GuestDeparture = () => {
   const [reservationNumber, setReservationNumber] = useState("");
@@ -686,159 +839,7 @@ const GuestDeparture = () => {
   );
 };
 
-// Composant GuestAssistance
-const GuestAssistance = () => {
-  const [requests, setRequests] = useState([
-    { id: 1, type: "Problème de chambre", description: "" },
-    { id: 2, type: "Demande touristique", description: "" },
-    { id: 3, type: "Service supplémentaire", description: "" },
-    { id: 4, type: "Autre", description: "" },
-  ]);
 
-  const [selectedRequest, setSelectedRequest] = useState(null);
-  const [description, setDescription] = useState("");
-  const [roomNumber, setRoomNumber] = useState("");
-  const [priority, setPriority] = useState("normal");
-  const [submittedRequests, setSubmittedRequests] = useState([]);
-
-  const handleRequestSubmit = (e) => {
-    e.preventDefault();
-    if (!selectedRequest || !description) return;
-    
-    const newRequest = {
-      id: Date.now(),
-      type: selectedRequest,
-      description,
-      roomNumber,
-      priority,
-      status: "Nouveau",
-      timestamp: new Date().toLocaleString()
-    };
-    
-    setSubmittedRequests([...submittedRequests, newRequest]);
-    setDescription("");
-    setRoomNumber("");
-    setPriority("normal");
-    setSelectedRequest(null);
-    
-    alert("Demande enregistrée avec succès!");
-  };
-
-  return (
-    <div className="container guest-assistance">
-      <h2>Assistance Client</h2>
-      
-      <div className="assistance-grid">
-        <div className="request-form">
-          <h3>Nouvelle demande</h3>
-          <div className="form-group">
-            <label>Type de demande</label>
-            <select
-              value={selectedRequest || ""}
-              onChange={(e) => setSelectedRequest(e.target.value)}
-              required
-            >
-              <option value="">Sélectionner un type</option>
-              {requests.map(request => (
-                <option key={request.id} value={request.type}>{request.type}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>Numéro de chambre (optionnel)</label>
-            <input
-              type="text"
-              value={roomNumber}
-              onChange={(e) => setRoomNumber(e.target.value)}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Priorité</label>
-            <select
-              value={priority}
-              onChange={(e) => setPriority(e.target.value)}
-            >
-              <option value="low">Basse</option>
-              <option value="normal">Normale</option>
-              <option value="high">Haute</option>
-              <option value="urgent">Urgente</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>Description détaillée</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows="4"
-              required
-            ></textarea>
-          </div>
-
-          <button 
-            type="button" 
-            className="btn" 
-            onClick={handleRequestSubmit}
-            disabled={!selectedRequest || !description}
-          >
-            Soumettre la demande
-          </button>
-        </div>
-
-        <div className="quick-links">
-          <h3>Informations utiles</h3>
-          <ul>
-            <li>Heures du petit-déjeuner: 7h-10h</li>
-            <li>Service de chambre disponible jusqu'à 22h</li>
-            <li>Piscine ouverte de 8h à 20h</li>
-            <li>Conciergerie disponible 24/7</li>
-            <li>Taxi: composer le 9 depuis la chambre</li>
-            <li>Médecin de garde: 01 23 45 67 89</li>
-          </ul>
-
-          <h3>Attractions locales</h3>
-          <ul>
-            <li>Musée des Beaux-Arts - 10min à pied</li>
-            <li>Centre ville historique - 15min en taxi</li>
-            <li>Parc naturel - 5min en voiture</li>
-          </ul>
-        </div>
-      </div>
-
-      {submittedRequests.length > 0 && (
-        <div className="request-history">
-          <h3>Historique des demandes</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Chambre</th>
-                <th>Priorité</th>
-                <th>Statut</th>
-              </tr>
-            </thead>
-            <tbody>
-              {submittedRequests.map(request => (
-                <tr key={request.id}>
-                  <td>{request.timestamp}</td>
-                  <td>{request.type}</td>
-                  <td>{request.roomNumber || "-"}</td>
-                  <td className={`priority-${request.priority}`}>
-                    {request.priority}
-                  </td>
-                  <td>{request.status}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  );
-};
 
 const RoomManagement = () => {
   const [rooms, setRooms] = useState([
@@ -852,7 +853,7 @@ const RoomManagement = () => {
       price: 100,
       checkInDate: "",
       checkOutDate: "",
-      image: room1001,
+      image: room1001, // Utiliser l'image locale
     },
     {
       id: 2,
@@ -864,7 +865,7 @@ const RoomManagement = () => {
       price: 150,
       checkInDate: "2023-10-25",
       checkOutDate: "2023-10-30",
-      image: room1002,
+      image: room1002, // Utiliser l'image locale
     },
     {
       id: 3,
@@ -876,7 +877,7 @@ const RoomManagement = () => {
       price: 200,
       checkInDate: "",
       checkOutDate: "",
-      image: room1003,
+      image: room1003, // Utiliser l'image locale
     },
     {
       id: 4,
@@ -888,7 +889,7 @@ const RoomManagement = () => {
       price: 250,
       checkInDate: "",
       checkOutDate: "",
-      image: room1004,
+      image: room1004, // Utiliser l'image locale
     },
     {
       id: 5,
@@ -900,7 +901,7 @@ const RoomManagement = () => {
       price: 200,
       checkInDate: "2023-11-01",
       checkOutDate: "2023-11-05",
-      image: room1005,
+      image: room1005, // Utiliser l'image locale
     },
     {
       id: 6,
@@ -912,7 +913,7 @@ const RoomManagement = () => {
       price: 250,
       checkInDate: "2023-10-20",
       checkOutDate: "2023-10-25",
-      image: room1006,
+      image: room1006, // Utiliser l'image locale
     },
     {
       id: 7,
@@ -924,7 +925,7 @@ const RoomManagement = () => {
       price: 150,
       checkInDate: "",
       checkOutDate: "",
-      image: room1007,
+      image: room1007, // Utiliser l'image locale
     },
     {
       id: 8,
@@ -936,7 +937,7 @@ const RoomManagement = () => {
       price: 100,
       checkInDate: "",
       checkOutDate: "",
-      image: room1008,
+      image: room1008, // Utiliser l'image locale
     },
     {
       id: 9,
@@ -948,19 +949,21 @@ const RoomManagement = () => {
       price: 200,
       checkInDate: "2023-11-10",
       checkOutDate: "2023-11-15",
-      image: room1009,
+      image: room1009, // Utiliser l'image locale
     },
   ]);
 
   const [filter, setFilter] = useState("all");
   const [floorFilter, setFloorFilter] = useState("all");
 
+  // Filtrer les chambres en fonction du statut et de l'étage
   const filteredRooms = rooms.filter((room) => {
     const statusMatch = filter === "all" || room.status === filter;
     const floorMatch = floorFilter === "all" || room.floor === floorFilter;
     return statusMatch && floorMatch;
   });
 
+  // Modifier le statut d'une chambre
   const changeRoomStatus = (id, newStatus, checkInDate = "", checkOutDate = "") => {
     setRooms(
       rooms.map((room) =>
@@ -975,6 +978,7 @@ const RoomManagement = () => {
     <div className="container room-management">
       <h2>Gestion des Chambres</h2>
 
+      {/* Filtres */}
       <div className="filters">
         <div className="form-group">
           <label>Filtrer par statut:</label>
@@ -1004,6 +1008,7 @@ const RoomManagement = () => {
         </div>
       </div>
 
+      {/* Tableau des chambres */}
       <table className="room-table">
         <thead>
           <tr>
@@ -1091,6 +1096,7 @@ const RoomManagement = () => {
     </div>
   );
 };
+
 
 const ClientManagement = () => {
   const [clients, setClients] = useState([
@@ -1309,6 +1315,7 @@ const AdministrativeTasks = () => {
     { id: 4, name: "Coordonner avec le service de ménage", done: false, category: "Ménage", priority: "moyenne" },
     { id: 5, name: "Vérifier les stocks mini-bar", done: false, category: "Stocks", priority: "haute" },
     { id: 6, name: "Planifier les maintenances", done: false, category: "Maintenance", priority: "moyenne" },
+    // Nouvelles tâches ajoutées
     { id: 7, name: "Gérer les plaintes clients", done: false, category: "Assistance client", priority: "haute" },
     { id: 8, name: "Vérifier les équipements", done: false, category: "Maintenance", priority: "moyenne" },
     { id: 9, name: "Coordonner avec le service restauration", done: false, category: "Réservations", priority: "basse" },
@@ -1321,12 +1328,14 @@ const AdministrativeTasks = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
 
+  // Toggle task status (done/undone)
   const toggleTask = (id) => {
     setTasks(tasks.map(task => 
       task.id === id ? { ...task, done: !task.done } : task
     ));
   };
 
+  // Add a new task
   const addTask = () => {
     if (newTask.trim()) {
       setTasks([...tasks, {
@@ -1340,6 +1349,7 @@ const AdministrativeTasks = () => {
     }
   };
 
+  // Filter tasks based on category and priority
   const filteredTasks = tasks.filter(task => {
     const categoryMatch = categoryFilter === "all" || task.category === categoryFilter;
     const priorityMatch = priorityFilter === "all" || task.priority === priorityFilter;
@@ -1350,6 +1360,7 @@ const AdministrativeTasks = () => {
     <div className="container administrative-tasks">
       <h2>Liste des Tâches à Faire (To-Do)</h2>
 
+      {/* Filters */}
       <div className="task-controls">
         <div className="form-group">
           <label>Filtrer par catégorie:</label>
@@ -1383,6 +1394,7 @@ const AdministrativeTasks = () => {
           </select>
         </div>
 
+        {/* Add New Task Form */}
         <div className="add-task">
           <input
             type="text"
@@ -1394,6 +1406,7 @@ const AdministrativeTasks = () => {
         </div>
       </div>
 
+      {/* Task List */}
       <ul className="task-list">
         {filteredTasks.map(task => (
           <li key={task.id} className={task.done ? "done" : ""}>
@@ -1414,83 +1427,198 @@ const AdministrativeTasks = () => {
   );
 };
 
-const Statistics = () => {
-  const stats = {
-    totalReservations: 120,
-    occupiedRooms: 45,
-    availableRooms: 75,
-    checkInsToday: 8,
-    checkOutsToday: 5,
-    revenue: 12500,
-    occupancyRate: 60,
-    averageRevenuePerRoom: 250,
-    topSourceOfBookings: "Online",
-    mostPopularRoomType: "Standard",
+// Composant pour la gestion des conversations (Réceptionniste <-> Administrateur)
+const Conversation = () => {
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      sender: "Admin",
+      content: "Bonjour, comment puis-je vous aider aujourd'hui?",
+      timestamp: "10:30 AM",
+      incoming: true
+    },
+    {
+      id: 2,
+      sender: "FemmeDeMenage",
+      content: "J'ai terminé le ménage de la chambre 101.",
+      timestamp: "10:45 AM",
+      incoming: true
+    }
+  ]);
+  const [newMessage, setNewMessage] = useState("");
+  const [selectedContact, setSelectedContact] = useState("Admin");
+
+  const handleSendMessage = () => {
+    if (newMessage.trim()) {
+      const message = {
+        id: Date.now(),
+        sender: "Receptionist",
+        content: newMessage,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        incoming: false
+      };
+      setMessages([...messages, message]);
+      setNewMessage("");
+
+      // Simuler une réponse automatique du destinataire après 2 secondes
+      setTimeout(() => {
+        const response = {
+          id: Date.now() + 1,
+          sender: selectedContact,
+          content: `Votre message a été reçu. Nous traiterons cela rapidement.`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          incoming: true
+        };
+        setMessages((prev) => [...prev, response]);
+      }, 2000);
+    }
   };
 
   return (
-    <div className="statistics-container">
-      <h2>Statistiques</h2>
-      
-      <div className="statistics-grid">
-        <div className="stat-card card-reservations">
-          <FaChartBar className="stat-icon" />
-          <div className="stat-content">
-            <h3>Réservations totales</h3>
-            <p className="stat-value">{stats.totalReservations}</p>
-            <p className="stat-trend">↑ 12% ce mois</p>
+    <div className="chat-section">
+      <div className="chat-container">
+        <div className="contact-list">
+          <div
+            className={`contact ${selectedContact === "Admin" ? "active" : ""}`}
+            onClick={() => setSelectedContact("Admin")}
+          >
+            <img src={admin} alt="Admin" className="contact-avatar" />
+            <div className="contact-info">
+              <div className="contact-name">Lucas Bernard</div>
+              <div className="contact-status">En ligne</div>
+            </div>
           </div>
-        </div>
+          <div
+            className={`contact ${selectedContact === "Responsable de service de menage" ? "active" : ""}`}
+            onClick={() => setSelectedContact("Responsable de service de menage")}
+          >
 
-        <div className="stat-card card-occupied">
-          <FaBed className="stat-icon" />
-          <div className="stat-content">
-            <h3>Chambres occupées</h3>
-            <p className="stat-value">{stats.occupiedRooms}</p>
-            <p className="stat-trend">{stats.occupancyRate}% d'occupation</p>
+             <img src={menage} alt="Admin" className="contact-avatar" />
+
+             <div className="contact-info">
+              <div className="contact-name">Nadia Slimani</div>
+              <div className="contact-status">En ligne</div>
+            </div>
           </div>
-        </div>
+          <div
+            className={`contact ${selectedContact === "Responsable de service compatible" ? "active" : ""}`}
+            onClick={() => setSelectedContact("Responsable de service compatible")}
+          >
+            <img src={compatible} alt="Admin" className="contact-avatar" />
 
-        <div className="stat-card card-available">
-          <FaBed className="stat-icon" />
-          <div className="stat-content">
-            <h3>Chambres disponibles</h3>
-            <p className="stat-value">{stats.availableRooms}</p>
-            <p className="stat-trend">{100 - stats.occupancyRate}% disponibles</p>
+            <div className="contact-info">
+              <div className="contact-name">Thomas Moreau</div>
+              <div className="contact-status">En ligne</div>
+            </div>
           </div>
+          {/* Ajoutez d'autres contacts ici */}
         </div>
-
-        <div className="stat-card card-revenue">
-          <FaCoins className="stat-icon" />
-          <div className="stat-content">
-            <h3>Revenu mensuel</h3>
-            <p className="stat-value">{stats.revenue.toLocaleString()}€</p>
-            <p className="stat-trend">↑ 8% vs mois dernier</p>
+        
+        <div className="chat-area">
+          <div className="chat-header">
+            
+            <div className="chat-info">
+              <div className="chat-name">
+                {selectedContact === "Admin" 
+                  ? "Administrateur" 
+                  : selectedContact === "Responsable de service de menage" 
+                    ? "Responsable de service de menage" 
+                    : "Responsable de service compatible"}
+              </div>
+              <div className="chat-status">En ligne</div>
+            </div>
+          </div>
+          
+          <div className="chat-messages">
+            {messages
+              .filter(msg => msg.sender === selectedContact || msg.incoming === false)
+              .map((msg) => (
+              <div key={msg.id} className={`message ${msg.incoming ? 'message-incoming' : 'message-outgoing'}`}>
+                <div className="message-bubble">
+                  <p>{msg.content}</p>
+                  <div className="message-timestamp">{msg.timestamp}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="chat-input">
+            <textarea
+              className="message-input"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Écrivez votre message..."
+              rows="1"
+            />
+            <button className="send-button" onClick={handleSendMessage}>
+              Envoyer
+            </button>
           </div>
         </div>
       </div>
+    </div>
+  );
+};
 
-      <div className="additional-stats">
-        <div className="stat-card detailed">
-          <h3>Taux d'occupation</h3>
-          <div className="progress-bar">
-            <div className="progress" style={{ width: `${stats.occupancyRate}%` }}></div>
-          </div>
-          <p>{stats.occupancyRate}% des chambres sont occupées</p>
-        </div>
-        <div className="stat-card detailed">
-          <h3>Revenu moyen par chambre</h3>
-          <p>{stats.averageRevenuePerRoom}€</p>
-        </div>
-        <div className="stat-card detailed">
-          <h3>Source principale de réservations</h3>
-          <p>{stats.topSourceOfBookings}</p>
-        </div>
-        <div className="stat-card detailed">
-          <h3>Type de chambre le plus populaire</h3>
-          <p>{stats.mostPopularRoomType}</p>
-        </div>
-      </div>
+// Composant pour gérer les approbations/refus des réservations (Administrateur)
+const AdminReservationApproval = () => {
+  const [reservations, setReservations] = useState([
+    { id: 1, guestName: "John Doe", room: "101", status: "En attente" },
+    { id: 2, guestName: "Jane Smith", room: "102", status: "En attente" },
+  ]);
+
+  const handleApprove = (id) => {
+    setReservations((prev) =>
+      prev.map((res) =>
+        res.id === id ? { ...res, status: "Approuvée" } : res
+      )
+    );
+  };
+
+  const handleReject = (id) => {
+    setReservations((prev) =>
+      prev.map((res) =>
+        res.id === id ? { ...res, status: "Rejetée" } : res
+      )
+    );
+  };
+
+  return (
+    <div className="container admin-reservation-approval">
+      <h2>Gestion des Réservations (Administrateur)</h2>
+      <table className="reservation-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom du Client</th>
+            <th>Chambre</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {reservations.map((res) => (
+            <tr key={res.id}>
+              <td>{res.id}</td>
+              <td>{res.guestName}</td>
+              <td>{res.room}</td>
+              <td>{res.status}</td>
+              <td>
+                {res.status === "En attente" && (
+                  <>
+                    <button className="btn approve" onClick={() => handleApprove(res.id)}>
+                      Approuver
+                    </button>
+                    <button className="btn reject" onClick={() => handleReject(res.id)}>
+                      Rejeter
+                    </button>
+                  </>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
@@ -1499,75 +1627,48 @@ const Statistics = () => {
 const ReceptionistDashboard = () => {
   const [activeSection, setActiveSection] = useState("Tableau de Bord");
   const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    const path = location.pathname;
-    if (path.endsWith("/welcome")) {
-      setActiveSection("Accueil Clients");
-    } else if (path.endsWith("/authenticate")) {
-      setActiveSection("Authentifier une Réservation");
-    } else if (path.endsWith("/create-reservation")) {
-      setActiveSection("Créer une Réservation");
-    } else if (path.endsWith("/departure")) {
-      setActiveSection("Gestion des Départs");
-    } else if (path.endsWith("/assistance")) {
-      setActiveSection("Assistance Client");
-    } else if (path.endsWith("/room-management")) {
-      setActiveSection("Gestion des Chambres");
-    } else if (path.endsWith("/client-management")) {
-      setActiveSection("Gestion des Clients");
-    } else if (path.endsWith("/administrative")) {
-      setActiveSection("Tâches Administratives");
-    } else if (path.endsWith("/statistics")) {
-      setActiveSection("Statistiques");
-    } else {
-      setActiveSection("Tableau de Bord");
-    }
-  }, [location]);
 
   const handleButtonClick = (buttonName) => {
     setActiveSection(buttonName);
     switch (buttonName) {
       case "Tableau de Bord":
-        navigate("");
+        navigate("/receptionist");
         break;
-      case "Accueil Clients":
-        navigate("welcome");
-        break;
+        case "Conversation":
+          navigate("/receptionist/conversation");
+          break;
+        case "Gestion des Approbations":
+          navigate("/admin/approval");
+          break;
+      
       case "Authentifier une Réservation":
-        navigate("authenticate");
+        navigate("/receptionist/authenticate");
         break;
       case "Créer une Réservation":
-        navigate("create-reservation");
+        navigate("/receptionist/create-reservation");
         break;
-      case "Gestion des Départs":
-        navigate("departure");
-        break;
-      case "Assistance Client":
-        navigate("assistance");
-        break;
+      
+     
       case "Gestion des Chambres":
-        navigate("room-management");
+        navigate("/receptionist/room-management");
         break;
-      case "Gestion des Clients":
-        navigate("client-management");
-        break;
+     
       case "Tâches Administratives":
-        navigate("administrative");
+        navigate("/receptionist/administrative");
         break;
-      case "Statistiques":
-        navigate("statistics");
-        break;
+      
       default:
-        navigate("");
+        navigate("/receptionist");
         break;
+        case "Demandes de Réservation":
+      navigate("/receptionist/reservation-requests");
+      break;
     }
   };
 
   const handleLogout = () => {
     alert("Déconnexion réussie");
-    navigate("/employee");
+    navigate("/");
   };
 
   return (
@@ -1575,15 +1676,18 @@ const ReceptionistDashboard = () => {
       <Sidebar
         buttons={[
           { name: "Tableau de Bord", icon: <FaHome /> },
-          { name: "Accueil Clients", icon: <FaUserCheck /> },
+          { name: "Conversation", icon: <FaComments /> },
+          { name: "Demandes de Réservation", icon: <FaUserCheck /> },
           { name: "Authentifier une Réservation", icon: <FaCheckCircle /> },
           { name: "Créer une Réservation", icon: <FaPlus /> },
-          { name: "Gestion des Départs", icon: <FaSignOutAlt /> },
-          { name: "Assistance Client", icon: <FaQuestionCircle /> },
+          
+        
           { name: "Gestion des Chambres", icon: <FaBed /> },
-          { name: "Gestion des Clients", icon: <FaUsers /> },
+         
           { name: "Tâches Administratives", icon: <FaClipboardList /> },
-          { name: "Statistiques", icon: <FaChartLine /> },
+          
+          
+         
         ]}
         onButtonClick={handleButtonClick}
         activeButton={activeSection}
@@ -1591,23 +1695,24 @@ const ReceptionistDashboard = () => {
         dashboardName="Tableau de Bord Réceptionniste"
         profileImage={profilereceptioniste}
       />
-
       <div className="main-content">
         <header className="dashboard-header">
           <h1>{activeSection}</h1>
         </header>
-
         <Routes>
-          <Route index element={<HomeDashboard />} />
-          <Route path="welcome" element={<GuestWelcome />} />
-          <Route path="authenticate" element={<AuthenticateReservation />} />
-          <Route path="create-reservation" element={<CreateReservation />} />
-          <Route path="departure" element={<GuestDeparture />} />
-          <Route path="assistance" element={<GuestAssistance />} />
-          <Route path="room-management" element={<RoomManagement />} />
-          <Route path="client-management" element={<ClientManagement />} />
-          <Route path="administrative" element={<AdministrativeTasks />} />
-          <Route path="statistics" element={<Statistics />} />
+          <Route path="/" element={<HomeDashboard />} />
+          <Route path="/welcome" element={<GuestWelcome />} />
+          <Route path="/authenticate" element={<AuthenticateReservation />} />
+          <Route path="/create-reservation" element={<CreateReservation />} />
+          <Route path="/departure" element={<GuestDeparture />} />
+          
+          <Route path="/room-management" element={<RoomManagement />} />
+          <Route path="/client-management" element={<ClientManagement />} />
+          <Route path="/administrative" element={<AdministrativeTasks />} />
+          
+          <Route path="/conversation" element={<Conversation />} />
+          <Route path="/reservation-requests" element={<ReservationRequests />} />
+          
         </Routes>
       </div>
     </div>

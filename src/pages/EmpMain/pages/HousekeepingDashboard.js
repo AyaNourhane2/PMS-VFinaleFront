@@ -1,80 +1,88 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Sidebar from "../components/Sidebar";
-import { FaTasks, FaClipboardList, FaShoppingCart, FaUserCheck, FaCheck, FaPlus } from "react-icons/fa";
+import { FaTasks, FaShoppingCart, FaUserCheck, FaCheck, FaPlus, FaEnvelope, FaSearch } from "react-icons/fa";
 import profilefemmenage from "../assets/profilefemmemenage.webp";
 import "../Style/housekeeping.css";
-import axios from 'axios';
 
 const HousekeepingDashboard = () => {
   const navigate = useNavigate();
   const [activeButton, setActiveButton] = useState("Tâches de Ménage");
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(null);
   const [tasks, setTasks] = useState([]);
-  const [specialRequests, setSpecialRequests] = useState([]);
   const [inventoryOrders, setInventoryOrders] = useState([]);
   const [staff, setStaff] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [rooms, setRooms] = useState([]);
   const [newTask, setNewTask] = useState({ room: "", status: "" });
-  const [newRequest, setNewRequest] = useState({ room: "", request: "" });
   const [newOrder, setNewOrder] = useState({ product: "", quantity: "" });
-  const [newEmployee, setNewEmployee] = useState({ name: "", status: "", performance: "" });
+  const [newEmployee, setNewEmployee] = useState({
+    nom: "",
+    position: "",
+    performance: "",
+  });
+  const [newMessage, setNewMessage] = useState("");
+  const [staffSearchQuery, setStaffSearchQuery] = useState("");
 
-  // Chargement initial des données
+  // Fetch data from backend
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const tasksRes = await axios.get('/api/housekeeping');
-        setTasks(tasksRes.data);
-        
-        const requestsRes = await axios.get('/api/special-requests');
-        setSpecialRequests(requestsRes.data);
-        
-        const ordersRes = await axios.get('/api/inventory');
-        setInventoryOrders(ordersRes.data);
-        
-        const staffRes = await axios.get('/api/staff');
-        setStaff(staffRes.data);
+        const roomsResponse = await axios.get("http://localhost:5000/api/rooms");
+        setRooms(roomsResponse.data);
+
+        const tasksResponse = await axios.get("http://localhost:5000/api/housekeeping_tasks");
+        setTasks(tasksResponse.data);
+
+        const ordersResponse = await axios.get("http://localhost:5000/api/inventory_orders");
+        setInventoryOrders(ordersResponse.data);
+
+        const staffResponse = await axios.get("http://localhost:5000/api/staff");
+        setStaff(staffResponse.data);
+
+        const messagesResponse = await axios.get("http://localhost:5000/api/messages");
+        setMessages(messagesResponse.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Erreur lors du chargement des données:", error);
       }
     };
     fetchData();
   }, []);
 
+  // Show success message with timeout
+  const displaySuccessMessage = (message) => {
+    setShowSuccessMessage(message);
+    setTimeout(() => setShowSuccessMessage(null), 3000);
+  };
+
   const updateTaskStatus = async (taskId, newStatus) => {
     try {
-      await axios.put(`/api/housekeeping/${taskId}/status`, { status: newStatus });
-      setTasks(tasks.map(task => task.id === taskId ? { ...task, status: newStatus } : task));
+      await axios.put(
+        `http://localhost:5000/api/housekeeping_tasks/${taskId}`,
+        { status: newStatus }
+      );
+      setTasks(tasks.map((task) => (task.id === taskId ? { ...task, status: newStatus } : task)));
+      displaySuccessMessage("Statut de la tâche mis à jour avec succès !");
     } catch (error) {
-      console.error('Error updating task status:', error);
+      console.error("Erreur lors de la mise à jour du statut de la tâche:", error);
+      alert("Impossible de mettre à jour le statut de la tâche.");
     }
   };
 
   const addTask = async () => {
     if (newTask.room && newTask.status) {
       try {
-        const response = await axios.post('/api/housekeeping', newTask);
+        const response = await axios.post(
+          "http://localhost:5000/api/housekeeping_tasks",
+          { room: newTask.room, status: newTask.status }
+        );
         setTasks([...tasks, response.data]);
         setNewTask({ room: "", status: "" });
+        displaySuccessMessage("Tâche ajoutée avec succès !");
       } catch (error) {
-        alert("Erreur lors de l'ajout de la tâche");
-      }
-    } else {
-      alert("Veuillez remplir tous les champs.");
-    }
-  };
-
-  const addSpecialRequest = async () => {
-    if (newRequest.room && newRequest.request) {
-      try {
-        const response = await axios.post('/api/special-requests', {
-          ...newRequest,
-          status: "en attente"
-        });
-        setSpecialRequests([...specialRequests, response.data]);
-        setNewRequest({ room: "", request: "" });
-      } catch (error) {
-        alert("Erreur lors de l'ajout de la demande");
+        console.error("Erreur lors de l'ajout de la tâche:", error);
+        alert("Impossible d'ajouter la tâche. Vérifiez que la chambre existe.");
       }
     } else {
       alert("Veuillez remplir tous les champs.");
@@ -84,16 +92,16 @@ const HousekeepingDashboard = () => {
   const addInventoryOrder = async () => {
     if (newOrder.product && newOrder.quantity) {
       try {
-        const response = await axios.post('/api/inventory', {
-          ...newOrder,
-          date: new Date().toISOString().split('T')[0]
-        });
+        const response = await axios.post(
+          "http://localhost:5000/api/inventory_orders",
+          { product: newOrder.product, quantity: newOrder.quantity }
+        );
         setInventoryOrders([...inventoryOrders, response.data]);
         setNewOrder({ product: "", quantity: "" });
-        setShowSuccessMessage(true);
-        setTimeout(() => setShowSuccessMessage(false), 3000);
+        displaySuccessMessage("Commande envoyée avec succès !");
       } catch (error) {
-        alert("Erreur lors de l'envoi de la commande");
+        console.error("Erreur lors de l'ajout de la commande:", error);
+        alert("Impossible d'ajouter la commande.");
       }
     } else {
       alert("Veuillez remplir tous les champs.");
@@ -101,33 +109,87 @@ const HousekeepingDashboard = () => {
   };
 
   const addEmployee = async () => {
-    if (newEmployee.name && newEmployee.status && newEmployee.performance) {
+    const { nom, position, performance } = newEmployee;
+    if (nom && position && performance) {
       try {
-        const response = await axios.post('/api/staff', {
-          ...newEmployee,
-          performance: parseFloat(newEmployee.performance)
+        const response = await axios.post(
+          "http://localhost:5000/api/staff",
+          {
+            nom,
+            position,
+            performance: parseFloat(performance),
+          }
+        );
+        setStaff([...staff, response.data.data]);
+        setNewEmployee({
+          nom: "",
+          position: "",
+          performance: "",
         });
-        setStaff([...staff, response.data]);
-        setNewEmployee({ name: "", status: "", performance: "" });
+        displaySuccessMessage("Employé ajouté avec succès !");
       } catch (error) {
-        alert("Erreur lors de l'ajout de l'employé");
+        console.error("Erreur lors de l'ajout de l'employé:", error);
+        alert(error.response?.data?.message || "Impossible d'ajouter l'employé.");
       }
     } else {
       alert("Veuillez remplir tous les champs.");
     }
   };
 
+  const addMessage = async () => {
+    if (newMessage.trim()) {
+      const newMessageEntry = {
+        sender: "User",
+        recipient: "Réceptionniste",
+        content: newMessage,
+        timestamp: new Date().toISOString().slice(0, 16).replace("T", " "),
+      };
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/messages",
+          newMessageEntry
+        );
+        setMessages([...messages, response.data]);
+        setNewMessage("");
+        displaySuccessMessage("Message envoyé avec succès !");
+        setTimeout(() => {
+          const responseMessage = {
+            id: messages.length + 2,
+            sender: "Réceptionniste",
+            recipient: "User",
+            content: "Merci pour votre message. Nous vous répondrons bientôt.",
+            timestamp: new Date().toISOString().slice(0, 16).replace("T", " "),
+          };
+          setMessages((prev) => [...prev, responseMessage]);
+        }, 2000);
+      } catch (error) {
+        console.error("Erreur lors de l'envoi du message:", error);
+        alert("Impossible d'envoyer le message.");
+      }
+    } else {
+      alert("Veuillez entrer un message.");
+    }
+  };
+
   const buttons = [
     { name: "Tâches de Ménage", icon: <FaTasks /> },
-    { name: "Demandes Spéciales", icon: <FaClipboardList /> },
     { name: "Commande des Produits", icon: <FaShoppingCart /> },
     { name: "Suivi du Personnel", icon: <FaUserCheck /> },
+    { name: "Messages", icon: <FaEnvelope /> },
   ];
 
   const handleLogout = () => {
     alert("Déconnexion réussie !");
-    navigate("/employee"); // Rediriger vers la page d'accueil
+    navigate("/");
   };
+
+  const availableRooms = rooms.length > 0
+    ? rooms.map((room) => room.room)
+    : Array.from({ length: 9 }, (_, i) => (1001 + i).toString());
+
+  const filteredStaff = staff.filter((employee) =>
+    employee.nom.toLowerCase().includes(staffSearchQuery.toLowerCase())
+  );
 
   return (
     <div className="container">
@@ -140,6 +202,7 @@ const HousekeepingDashboard = () => {
         profileImage={profilefemmenage}
       />
       <div className="main-content">
+        {showSuccessMessage && <p className="successMessage">{showSuccessMessage}</p>}
         {activeButton === "Tâches de Ménage" && (
           <section className="section">
             <h2 className="heading">Tâches de Ménage</h2>
@@ -155,9 +218,14 @@ const HousekeepingDashboard = () => {
                 {tasks.map((task) => (
                   <tr key={task.id}>
                     <td>{task.room}</td>
-                    <td>{task.status}</td>
                     <td>
-                      <button className="button" onClick={() => updateTaskStatus(task.id, "propre")}>
+                      {task.status === "clean" ? "Propre" :
+                       task.status === "dirty" ? "Sale" :
+                       task.status === "in_progress" ? "En cours" :
+                       "Inspecté"}
+                    </td>
+                    <td>
+                      <button className="button" onClick={() => updateTaskStatus(task.id, "clean")}>
                         <FaCheck /> Marquer comme propre
                       </button>
                     </td>
@@ -166,22 +234,28 @@ const HousekeepingDashboard = () => {
               </tbody>
             </table>
             <div className="form">
-              <input
-                type="text"
-                placeholder="ID de la chambre"
+              <select
                 value={newTask.room}
                 onChange={(e) => setNewTask({ ...newTask, room: e.target.value })}
                 className="input"
-              />
+              >
+                <option value="">Choisir une chambre</option>
+                {availableRooms.map((room) => (
+                  <option key={room} value={room}>
+                    {room}
+                  </option>
+                ))}
+              </select>
               <select
                 value={newTask.status}
                 onChange={(e) => setNewTask({ ...newTask, status: e.target.value })}
                 className="input"
               >
                 <option value="">Choisir un statut</option>
-                <option value="à nettoyer">À nettoyer</option>
-                <option value="en maintenance">En maintenance</option>
-                <option value="utilisé">Utilisé</option>
+                <option value="clean">Propre</option>
+                <option value="dirty">Sale</option>
+                <option value="in_progress">En cours</option>
+                <option value="inspected">Inspecté</option>
               </select>
               <button className="button" onClick={addTask}>
                 <FaPlus /> Ajouter une tâche
@@ -190,53 +264,9 @@ const HousekeepingDashboard = () => {
           </section>
         )}
 
-        {activeButton === "Demandes Spéciales" && (
-          <section className="section">
-            <h2 className="heading">Demandes Spéciales</h2>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>ID de la chambre</th>
-                  <th>Demande</th>
-                  <th>Statut</th>
-                </tr>
-              </thead>
-              <tbody>
-                {specialRequests.map((request) => (
-                  <tr key={request.id}>
-                    <td>{request.room}</td>
-                    <td>{request.request}</td>
-                    <td>{request.status}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="form">
-              <input
-                type="text"
-                placeholder="ID de la chambre"
-                value={newRequest.room}
-                onChange={(e) => setNewRequest({ ...newRequest, room: e.target.value })}
-                className="input"
-              />
-              <input
-                type="text"
-                placeholder="Demande"
-                value={newRequest.request}
-                onChange={(e) => setNewRequest({ ...newRequest, request: e.target.value })}
-                className="input"
-              />
-              <button className="button" onClick={addSpecialRequest}>
-                <FaPlus /> Ajouter une demande
-              </button>
-            </div>
-          </section>
-        )}
-
         {activeButton === "Commande des Produits" && (
           <section className="section">
             <h2 className="heading">Commande des Produits</h2>
-            {showSuccessMessage && <p className="successMessage">Commande envoyée avec succès !</p>}
             <table className="table">
               <thead>
                 <tr>
@@ -250,7 +280,7 @@ const HousekeepingDashboard = () => {
                   <tr key={order.id}>
                     <td>{order.product}</td>
                     <td>{order.quantity}</td>
-                    <td>{order.date}</td>
+                    <td>{new Date(order.order_date).toLocaleDateString('fr-FR')}</td>
                   </tr>
                 ))}
               </tbody>
@@ -269,6 +299,7 @@ const HousekeepingDashboard = () => {
                 value={newOrder.quantity}
                 onChange={(e) => setNewOrder({ ...newOrder, quantity: e.target.value })}
                 className="input"
+                min="1"
               />
               <button className="button" onClick={addInventoryOrder}>
                 <FaPlus /> Envoyer la commande
@@ -280,20 +311,45 @@ const HousekeepingDashboard = () => {
         {activeButton === "Suivi du Personnel" && (
           <section className="section">
             <h2 className="heading">Suivi du Personnel</h2>
+            <div className="search-bar">
+              <FaSearch className="search-icon" />
+              <input
+                type="text"
+                placeholder="Rechercher un employé par nom..."
+                value={staffSearchQuery}
+                onChange={(e) => setStaffSearchQuery(e.target.value)}
+                className="input search-input"
+              />
+            </div>
             <table className="table">
               <thead>
                 <tr>
+                  <th>ID</th>
                   <th>Nom</th>
-                  <th>Statut</th>
+                  <th>Poste</th>
                   <th>Performance</th>
                 </tr>
               </thead>
               <tbody>
-                {staff.map((employee) => (
+                {filteredStaff.map((employee) => (
                   <tr key={employee.id}>
-                    <td>{employee.name}</td>
-                    <td>{employee.status}</td>
-                    <td>{employee.performance}/10</td>
+                    <td>{employee.id}</td>
+                    <td>{employee.nom}</td>
+                    <td>
+                      {employee.position === "Housekeeper" ? "Femme de ménage" :
+                       employee.position === "Supervisor" ? "Superviseur" :
+                       employee.position === "Cleaner" ? "Nettoyeur" :
+                       employee.position}
+                    </td>
+                    <td>
+                      <div className="performance-bar">
+                        <div 
+                          className="performance-fill" 
+                          style={{ width: `${employee.performance * 10}%` }}
+                        ></div>
+                        <span>{employee.performance}/10</span>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -301,19 +357,20 @@ const HousekeepingDashboard = () => {
             <div className="form">
               <input
                 type="text"
-                placeholder="Nom de l'employé"
-                value={newEmployee.name}
-                onChange={(e) => setNewEmployee({ ...newEmployee, name: e.target.value })}
+                placeholder="Nom"
+                value={newEmployee.nom}
+                onChange={(e) => setNewEmployee({ ...newEmployee, nom: e.target.value })}
                 className="input"
               />
               <select
-                value={newEmployee.status}
-                onChange={(e) => setNewEmployee({ ...newEmployee, status: e.target.value })}
+                value={newEmployee.position}
+                onChange={(e) => setNewEmployee({ ...newEmployee, position: e.target.value })}
                 className="input"
               >
-                <option value="">Choisir un statut</option>
-                <option value="présent">Présent</option>
-                <option value="absent">Absent</option>
+                <option value="">Choisir un poste</option>
+                <option value="Housekeeper">Femme de ménage</option>
+                <option value="Supervisor">Superviseur</option>
+                <option value="Cleaner">Nettoyeur</option>
               </select>
               <input
                 type="number"
@@ -331,8 +388,106 @@ const HousekeepingDashboard = () => {
             </div>
           </section>
         )}
+
+        {activeButton === "Messages" && (
+          <MessageSection
+            messages={messages}
+            newMessage={newMessage}
+            setNewMessage={setNewMessage}
+            addMessage={addMessage}
+          />
+        )}
       </div>
     </div>
+  );
+};
+
+// MessageSection component
+const MessageSection = ({ messages, newMessage, setNewMessage, addMessage }) => {
+  const [selectedContact, setSelectedContact] = useState("Réceptionniste");
+  const chatEndRef = useRef(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      addMessage();
+    }
+  };
+
+  return (
+    <section className="section chat-section">
+      <h2 className="heading">Messages</h2>
+      <div className="chat-container">
+        <div className="contact-list">
+          <div
+            className={`contact ${selectedContact === "Réceptionniste" ? "active" : ""}`}
+            onClick={() => setSelectedContact("Réceptionniste")}
+          >
+            <img
+              src={profilefemmenage}
+              alt="Réceptionniste"
+              className="contact-avatar"
+            />
+            <div className="contact-info">
+              <div className="contact-name">Réceptionniste</div>
+              <div className="contact-status">Actif maintenant</div>
+            </div>
+          </div>
+        </div>
+        <div className="chat-area">
+          <div className="chat-header">
+            <img
+              src={profilefemmenage}
+              alt="Réceptionniste"
+              className="chat-avatar"
+            />
+            <div className="chat-info">
+              <div className="chat-name">Réceptionniste</div>
+              <div className="contact-status">Actif maintenant</div>
+            </div>
+          </div>
+          <div className="chat-messages">
+            {messages
+              .filter(
+                (msg) =>
+                  (msg.sender === "User" && msg.recipient === selectedContact) ||
+                  (msg.sender === selectedContact && msg.recipient === "User")
+              )
+              .map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`message ${
+                    msg.sender === "User" ? "message-outgoing" : "message-incoming"
+                  }`}
+                >
+                  <div className="message-bubble">
+                    {msg.content}
+                    <div className="message-timestamp">{msg.timestamp}</div>
+                  </div>
+                </div>
+              ))}
+            <div ref={chatEndRef} />
+          </div>
+          <div className="chat-input">
+            <textarea
+              placeholder="Tapez un message"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="input message-input"
+              rows="1"
+            />
+            <button className="button send-button" onClick={addMessage}>
+              Envoyer
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 
