@@ -25,7 +25,7 @@ const Payments = lazy(() => import("./pages/Admin/components/Payments"));
 const Invoices = lazy(() => import("./pages/Admin/components/Invoices"));
 const Taxes = lazy(() => import("./pages/Admin/components/Taxes"));
 const CleaningService = lazy(() => import("./pages/Admin/components/CleaningService"));
-const CleaningTasks = lazy(() => import("./pages/Admin/components/CleaningTasks"));
+
 const StaffTracking = lazy(() => import("./pages/Admin/components/StaffTracking"));
 const Settings = lazy(() => import("./pages/Admin/components/Settings"));
 const CompatibleService = lazy(() => import("./pages/Admin/components/CompatibleService"));
@@ -105,7 +105,7 @@ const AdminRoutes = ({ onLogout }) => {
         <Routes>
           <Route path="/" element={<Navigate to="/admin/dashboard" />} />
           <Route path="/dashboard" element={<AdminDashboard />} />
-          <Route path="/room-management" element={<RoomManagement />} />
+          <Route path="/rooms" element={<RoomManagement />} />
           <Route path="/reservations" element={<ReservationManagement />} />
           <Route path="/users" element={<UserManagement />} />
           <Route path="/messages" element={<MessagesAndEmails />} />
@@ -114,7 +114,7 @@ const AdminRoutes = ({ onLogout }) => {
           <Route path="/invoices" element={<Invoices />} />
           <Route path="/taxes" element={<Taxes />} />
           <Route path="/cleaning" element={<CleaningService />} />
-          <Route path="/cleaning-tasks" element={<CleaningTasks />} />
+         
           <Route path="/staff-tracking" element={<StaffTracking />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/compatible-service" element={<CompatibleService />} />

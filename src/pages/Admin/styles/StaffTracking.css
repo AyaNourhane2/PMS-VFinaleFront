@@ -3,7 +3,8 @@
     padding: 0; /* Supprimer le padding */
     background-color: #ffffff;
     box-shadow: none; /* Supprimer l'ombre */
-    margin: 20px auto;
+    margin: 20px ;
+    margin-left: 350px;
     max-width: 100%; /* Ajustez la largeur maximale */
     font-family: 'Lato', Arial, sans-serif;
     overflow-x: auto; /* Permettre le défilement horizontal si nécessaire */

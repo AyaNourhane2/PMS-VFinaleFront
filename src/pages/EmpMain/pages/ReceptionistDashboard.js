@@ -97,12 +97,7 @@ const HomeDashboard = () => {
           </table>
         </div>
 
-        <div className="quick-actions">
-          <h3>Actions Rapides</h3>
-          <button onClick={handleCheckArrivals}>Enregistrer une arrivée</button>
-          <button onClick={handleCheckDepartures}>Gérer un départ</button>
-          <button onClick={handleViewAvailableRooms}>Voir chambres disponibles</button>
-        </div>
+        
       </div>
     </div>
   );
@@ -278,6 +273,17 @@ const ReservationRequests = () => {
       specialRequests: "Anniversaire de mariage",
       status: "En attente",
       submittedAt: "2023-11-02 09:15"
+    },
+    {
+      id: 3,
+      guestName: "Pierre Lambert",
+      checkInDate: "2023-12-05",
+      checkOutDate: "2023-12-10",
+      roomType: "Chambre Familiale",
+      guests: 5,
+      specialRequests: "",
+      status: "Approuvée",
+      submittedAt: "2023-10-30 16:45"
     }
   ]);
 
@@ -338,6 +344,11 @@ const ReservationRequests = () => {
               <div className="detail-group">
                 <label>Type de chambre :</label>
                 <p>{request.roomType}</p>
+              </div>
+              
+              <div className="detail-group">
+                <label>Nombre de personnes :</label>
+                <p>{request.guests}</p>
               </div>
               
               {request.specialRequests && (
@@ -450,15 +461,22 @@ const AuthenticateReservation = () => {
 // Composant CreateReservation
 const CreateReservation = () => {
   const [reservation, setReservation] = useState({
-    guestName: "",
-    email: "",
-    phone: "",
+    reservationNumber: "",
     checkInDate: "",
     checkOutDate: "",
-    roomType: "Standard",
-    adults: 1,
-    children: 0,
-    specialRequests: ""
+    guestName: "",
+    email: "",
+    country: "",
+    phoneNumber: "",
+    address: "",
+    documentType: "passport",
+    documentNumber: "",
+    specialRequests: { babyBed: false, highFloor: false, other: "" },
+    additionalServices: { gym: false, spa: false, restaurant: false, emergency: false },
+    paymentMethod: "",
+    cardNumber: "",
+    expiryDate: "",
+    cvv: ""
   });
 
   const [message, setMessage] = useState("");
@@ -466,76 +484,57 @@ const CreateReservation = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setReservation({ ...reservation, [name]: value });
+    if (name in reservation.specialRequests || name in reservation.additionalServices) {
+      setReservation(prev => ({
+        ...prev,
+        [name.includes("special") ? "specialRequests" : "additionalServices"]: {
+          ...prev[name.includes("special") ? "specialRequests" : "additionalServices"],
+          [name]: value === "on" ? !prev[name.includes("special") ? "specialRequests" : "additionalServices"][name] : value
+        }
+      }));
+    } else {
+      setReservation({ ...reservation, [name]: value });
+    }
   };
 
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("Réservation créée avec succès !");
-    // Réinitialiser le formulaire
-    setReservation({
-      guestName: "",
-      email: "",
-      phone: "",
-      checkInDate: "",
-      checkOutDate: "",
-      roomType: "Standard",
-      adults: 1,
-      children: 0,
-      specialRequests: ""
-    });
-    setStep(1);
+    try {
+      setMessage("Réservation créée avec succès !");
+      setReservation({
+        reservationNumber: "",
+        checkInDate: "",
+        checkOutDate: "",
+        guestName: "",
+        email: "",
+        country: "",
+        phoneNumber: "",
+        address: "",
+        documentType: "passport",
+        documentNumber: "",
+        specialRequests: { babyBed: false, highFloor: false, other: "" },
+        additionalServices: { gym: false, spa: false, restaurant: false, emergency: false },
+        paymentMethod: "",
+        cardNumber: "",
+        expiryDate: "",
+        cvv: ""
+      });
+      setStep(1);
+    } catch (err) {
+      setMessage("Erreur lors de la création de la réservation.");
+    }
   };
 
   return (
-    <div className="container create-reservation">
+    <div className="form-container">
       <h2>Créer une Nouvelle Réservation</h2>
       <form onSubmit={handleSubmit}>
         {step === 1 && (
           <div className="form-step">
-            <h3>Étape 1: Informations client</h3>
-            <div className="form-group">
-              <label>Nom complet</label>
-              <input
-                type="text"
-                name="guestName"
-                value={reservation.guestName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Email</label>
-              <input
-                type="email"
-                name="email"
-                value={reservation.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Téléphone</label>
-              <input
-                type="tel"
-                name="phone"
-                value={reservation.phone}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-actions">
-              <button type="button" className="btn" onClick={nextStep}>Suivant</button>
-            </div>
-          </div>
-        )}
-
-        {step === 2 && (
-          <div className="form-step">
-            <h3>Étape 2: Détails du séjour</h3>
+            <h3>Étape 1: Sélection des dates</h3>
             <div className="form-group">
               <label>Date d'arrivée</label>
               <input
@@ -556,40 +555,111 @@ const CreateReservation = () => {
                 required
               />
             </div>
+            <div className="form-actions">
+              <button type="button" className="btn" onClick={nextStep}>Suivant</button>
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="form-step">
+            <h3>Étape 2: Informations personnelles</h3>
             <div className="form-group">
-              <label>Type de chambre</label>
+              <label>Nom du client</label>
+              <input
+                type="text"
+                name="guestName"
+                value={reservation.guestName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Prenom du client</label>
+              <input
+                type="text"
+                name="guestName"
+                value={reservation.guestName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                value={reservation.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Pays</label>
+              <input
+                type="text"
+                name="country"
+                value={reservation.country}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Numéro de téléphone</label>
+              <input
+                type="text"
+                name="phoneNumber"
+                value={reservation.phoneNumber}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Adresse d'habitat</label>
+              <input
+                type="text"
+                name="address"
+                value={reservation.address}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Type de document</label>
               <select
-                name="roomType"
-                value={reservation.roomType}
+                name="documentType"
+                value={reservation.documentType}
                 onChange={handleChange}
                 required
               >
-                <option value="Standard">Standard</option>
-                <option value="Supérieure">Supérieure</option>
-                <option value="Deluxe">Deluxe</option>
-                <option value="Suite">Suite</option>
+                <option value="passport">Passeport</option>
+                <option value="nationalId">Carte Nationale</option>
               </select>
             </div>
             <div className="form-group">
-              <label>Adultes</label>
+              <label>Numéro du document</label>
               <input
-                type="number"
-                name="adults"
-                value={reservation.adults}
+                type="text"
+                name="documentNumber"
+                value={reservation.documentNumber}
                 onChange={handleChange}
-                min="1"
                 required
               />
             </div>
             <div className="form-group">
-              <label>Enfants</label>
+              <label>Demandes spéciales</label>
+              <div>
+              <label><input type="checkbox" name="gym" checked={reservation.additionalServices.gym} onChange={handleChange} /> Lit bébé</label>
+              <label><input type="checkbox" name="spa" checked={reservation.additionalServices.spa} onChange={handleChange} /> Etage élevé</label>
+              <label>Autre</label>
               <input
-                type="number"
-                name="children"
-                value={reservation.children}
+                type="text"
+                name="autre"
+                value={reservation.autre}
                 onChange={handleChange}
-                min="0"
+                required
               />
+              </div>
             </div>
             <div className="form-actions">
               <button type="button" className="btn secondary" onClick={prevStep}>Précédent</button>
@@ -598,21 +668,105 @@ const CreateReservation = () => {
           </div>
         )}
 
-        {step === 3 && (
+{step === 3 && (
           <div className="form-step">
-            <h3>Étape 3: Options supplémentaires</h3>
+            <h3>Étape 3: Services additionnels</h3>
             <div className="form-group">
-              <label>Demandes spéciales</label>
-              <textarea
-                name="specialRequests"
-                value={reservation.specialRequests}
-                onChange={handleChange}
-                rows="3"
-              />
+              <h3>GYM</h3>
+              <div>
+                <label><input type="radio" name="gym" value="cardio" checked={reservation.additionalServices.gym === "cardio"} onChange={handleChange} /> Cardio Training (6H-22H)</label>
+                <label><input type="radio" name="gym" value="muscu" checked={reservation.additionalServices.gym === "muscu"} onChange={handleChange} /> Musculation (7H-21H)</label>
+                <label><input type="radio" name="gym" value="yoga" checked={reservation.additionalServices.gym === "yoga"} onChange={handleChange} /> Yoga (8H-20H)</label>
+              </div>
             </div>
+            <div className="form-group">
+            <h3>SPA</h3>
+              <div>
+                <label><input type="radio" name="spa" value="massage" checked={reservation.additionalServices.spa === "massage"} onChange={handleChange} /> Massage (10H-20H)</label>
+                <label><input type="radio" name="spa" value="face" checked={reservation.additionalServices.spa === "face"} onChange={handleChange} /> Soins de visage (9H-18H)</label>
+                <label><input type="radio" name="spa" value="feet" checked={reservation.additionalServices.spa === "feet"} onChange={handleChange} /> Soins des pieds (11H-19H)</label>
+              </div>
+            </div>
+            <div className="form-group">
+            <h3>RESTAURATION</h3>              <div>
+                <label><input type="radio" name="restaurant" value="breakfast" checked={reservation.additionalServices.restaurant === "breakfast"} onChange={handleChange} /> Petit déjeuner (1493.40 DA)</label>
+                <label><input type="radio" name="restaurant" value="restaurant" checked={reservation.additionalServices.restaurant === "restaurant"} onChange={handleChange} /> Restaurant (1493.40 DA)</label>
+                <label><input type="radio" name="restaurant" value="cafeteria" checked={reservation.additionalServices.restaurant === "cafeteria"} onChange={handleChange} /> Cafeteria (1493.40 DA)</label>
+              </div>
+            </div>
+            
             <div className="form-actions">
               <button type="button" className="btn secondary" onClick={prevStep}>Précédent</button>
-              <button type="submit" className="btn">Créer la réservation</button>
+              <button type="button" className="btn" onClick={nextStep}>Suivant</button>
+            </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div className="form-step">
+            <h3>Étape 4: Mode de paiement</h3>
+            <div className="form-group">
+              <label>Mode de paiement</label>
+              <select
+                name="paymentMethod"
+                value={reservation.paymentMethod}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Sélectionnez un mode</option>
+                <option value="card">Carte bancaire</option>
+                <option value="transfer">Virement</option>
+                <option value="check">Chèque</option>
+              </select>
+            </div>
+            {reservation.paymentMethod === "card" && (
+              <>
+                <div className="form-group">
+                  <label>Numéro de carte</label>
+                  <input
+                    type="text"
+                    name="cardNumber"
+                    value={reservation.cardNumber}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+              <label>Date d'expiration</label>
+              <input
+                type="date"
+                name="checkInDate"
+                value={reservation.checkInDate}
+                onChange={handleChange}
+                required
+              />
+                </div>
+                <div className="form-group">
+                  <label>Cryptogramme visuel (CVV)</label>
+                  <input
+                    type="text"
+                    name="cvv"
+                    value={reservation.cvv}
+                    onChange={handleChange}
+                    required
+                    maxLength="4"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>nom du titulaire de la carte</label>
+                  <input
+                    type="text"
+                    name="cardNumber"
+                    value={reservation.cardNumber}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </>
+            )}
+            <div className="form-actions">
+              <button type="button" className="btn secondary" onClick={prevStep}>Précédent</button>
+              <button type="submit" className="btn">Finaliser la Réservation</button>
             </div>
           </div>
         )}
@@ -620,7 +774,7 @@ const CreateReservation = () => {
       {message && <p className="message success">{message}</p>}
     </div>
   );
-};
+}
 
 // Composant GuestDeparture
 const GuestDeparture = () => {
@@ -744,37 +898,151 @@ const GuestDeparture = () => {
   );
 };
 
-// Composant RoomManagement
 const RoomManagement = () => {
   const [rooms, setRooms] = useState([
-    { id: 1, number: "1001", status: "Disponible", type: "Standard", floor: "1", cleaningStatus: "Propre", price: 100 },
-    { id: 2, number: "1002", status: "Occupée", type: "Supérieure", floor: "1", cleaningStatus: "A nettoyer", price: 150 },
-    { id: 3, number: "1003", status: "Maintenance", type: "Deluxe", floor: "1", cleaningStatus: "En cours", price: 200 },
-    { id: 4, number: "1004", status: "Disponible", type: "Suite", floor: "2", cleaningStatus: "Propre", price: 250 },
-    { id: 5, number: "1005", status: "Réservée", type: "Deluxe", floor: "2", cleaningStatus: "Propre", price: 200 },
+    {
+      id: 1,
+      number: "1001",
+      status: "Disponible",
+      type: "Chambre Standard",
+      floor: "1",
+      cleaningStatus: "Propre",
+      price: 100,
+      checkInDate: "",
+      checkOutDate: "",
+      image: room1001, // Utiliser l'image locale
+    },
+    {
+      id: 2,
+      number: "1002",
+      status: "Occupée",
+      type: "Chambre Supérieure",
+      floor: "1",
+      cleaningStatus: "A nettoyer",
+      price: 150,
+      checkInDate: "2023-10-25",
+      checkOutDate: "2023-10-30",
+      image: room1002, // Utiliser l'image locale
+    },
+    {
+      id: 3,
+      number: "1003",
+      status: "Maintenance",
+      type: "Chambre Deluxe",
+      floor: "1",
+      cleaningStatus: "En cours",
+      price: 200,
+      checkInDate: "",
+      checkOutDate: "",
+      image: room1003, // Utiliser l'image locale
+    },
+    {
+      id: 4,
+      number: "1004",
+      status: "Disponible",
+      type: "Suite Junior",
+      floor: "2",
+      cleaningStatus: "Propre",
+      price: 250,
+      checkInDate: "",
+      checkOutDate: "",
+      image: room1004, // Utiliser l'image locale
+    },
+    {
+      id: 5,
+      number: "1005",
+      status: "Réservée",
+      type: "Chambre Deluxe",
+      floor: "2",
+      cleaningStatus: "Propre",
+      price: 200,
+      checkInDate: "2023-11-01",
+      checkOutDate: "2023-11-05",
+      image: room1005, // Utiliser l'image locale
+    },
+    {
+      id: 6,
+      number: "1006",
+      status: "Occupée",
+      type: "Suite Junior",
+      floor: "2",
+      cleaningStatus: "A nettoyer",
+      price: 250,
+      checkInDate: "2023-10-20",
+      checkOutDate: "2023-10-25",
+      image: room1006, // Utiliser l'image locale
+    },
+    {
+      id: 7,
+      number: "1007",
+      status: "Maintenance",
+      type: "Chambre Supérieure",
+      floor: "2",
+      cleaningStatus: "En cours",
+      price: 150,
+      checkInDate: "",
+      checkOutDate: "",
+      image: room1007, // Utiliser l'image locale
+    },
+    {
+      id: 8,
+      number: "1008",
+      status: "Disponible",
+      type: "Chambre Standard",
+      floor: "3",
+      cleaningStatus: "Propre",
+      price: 100,
+      checkInDate: "",
+      checkOutDate: "",
+      image: room1008, // Utiliser l'image locale
+    },
+    {
+      id: 9,
+      number: "1009",
+      status: "Réservée",
+      type: "Chambre Deluxe",
+      floor: "3",
+      cleaningStatus: "Propre",
+      price: 200,
+      checkInDate: "2023-11-10",
+      checkOutDate: "2023-11-15",
+      image: room1009, // Utiliser l'image locale
+    },
   ]);
 
   const [filter, setFilter] = useState("all");
   const [floorFilter, setFloorFilter] = useState("all");
 
+  // Filtrer les chambres en fonction du statut et de l'étage
   const filteredRooms = rooms.filter((room) => {
     const statusMatch = filter === "all" || room.status === filter;
     const floorMatch = floorFilter === "all" || room.floor === floorFilter;
     return statusMatch && floorMatch;
   });
 
-  const changeRoomStatus = (id, newStatus) => {
-    setRooms(rooms.map(room => room.id === id ? { ...room, status: newStatus } : room));
+  // Modifier le statut d'une chambre
+  const changeRoomStatus = (id, newStatus, checkInDate = "", checkOutDate = "") => {
+    setRooms(
+      rooms.map((room) =>
+        room.id === id
+          ? { ...room, status: newStatus, checkInDate, checkOutDate }
+          : room
+      )
+    );
   };
 
   return (
     <div className="container room-management">
       <h2>Gestion des Chambres</h2>
 
+      {/* Filtres */}
       <div className="filters">
         <div className="form-group">
           <label>Filtrer par statut:</label>
-          <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          >
             <option value="all">Tous</option>
             <option value="Disponible">Disponible</option>
             <option value="Occupée">Occupée</option>
@@ -785,29 +1053,39 @@ const RoomManagement = () => {
 
         <div className="form-group">
           <label>Filtrer par étage:</label>
-          <select value={floorFilter} onChange={(e) => setFloorFilter(e.target.value)}>
+          <select
+            value={floorFilter}
+            onChange={(e) => setFloorFilter(e.target.value)}
+          >
             <option value="all">Tous</option>
             <option value="1">1er étage</option>
             <option value="2">2ème étage</option>
+            <option value="3">3ème étage</option>
           </select>
         </div>
       </div>
 
+      {/* Tableau des chambres */}
       <table className="room-table">
         <thead>
           <tr>
+            <th>Photo</th>
             <th>Numéro</th>
             <th>Étage</th>
             <th>Type</th>
             <th>Prix (€/nuit)</th>
             <th>Statut</th>
             <th>Nettoyage</th>
+            <th>Dates de séjour</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredRooms.map((room) => (
             <tr key={room.id} className={`status-${room.status.toLowerCase()}`}>
+              <td>
+                <img src={room.image} alt={`Chambre ${room.number}`} className="room-image" />
+              </td>
               <td>{room.number}</td>
               <td>{room.floor}</td>
               <td>{room.type}</td>
@@ -815,15 +1093,58 @@ const RoomManagement = () => {
               <td>{room.status}</td>
               <td>{room.cleaningStatus}</td>
               <td>
-                <select
-                  value={room.status}
-                  onChange={(e) => changeRoomStatus(room.id, e.target.value)}
-                >
-                  <option value="Disponible">Disponible</option>
-                  <option value="Occupée">Occupée</option>
-                  <option value="Réservée">Réservée</option>
-                  <option value="Maintenance">Maintenance</option>
-                </select>
+                {room.status === "Réservée" ? (
+                  <>
+                    Du {room.checkInDate} au {room.checkOutDate}
+                  </>
+                ) : (
+                  "-"
+                )}
+              </td>
+              <td>
+                {room.status !== "Réservée" ? (
+                  <select
+                    value={room.status}
+                    onChange={(e) => {
+                      if (e.target.value === "Réservée") {
+                        const checkInDate = prompt(
+                          "Entrez la date d'arrivée (AAAA-MM-JJ):"
+                        );
+                        const checkOutDate = prompt(
+                          "Entrez la date de départ (AAAA-MM-JJ):"
+                        );
+                        if (checkInDate && checkOutDate) {
+                          changeRoomStatus(
+                            room.id,
+                            e.target.value,
+                            checkInDate,
+                            checkOutDate
+                          );
+                        }
+                      } else {
+                        changeRoomStatus(room.id, e.target.value);
+                      }
+                    }}
+                  >
+                    <option value="Disponible">Disponible</option>
+                    <option value="Occupée">Occupée</option>
+                    <option value="Réservée">Réservée</option>
+                    <option value="Maintenance">Maintenance</option>
+                  </select>
+                ) : (
+                  <button
+                    onClick={() => {
+                      const confirmChange = window.confirm(
+                        "Voulez-vous changer le statut de cette chambre ?"
+                      );
+                      if (confirmChange) {
+                        changeRoomStatus(room.id, "Disponible", "", "");
+                      }
+                    }}
+                  >
+                    Annuler la réservation
+                  </button>
+                )}
               </td>
             </tr>
           ))}
@@ -833,25 +1154,35 @@ const RoomManagement = () => {
   );
 };
 
-// Composant AdministrativeTasks
 const AdministrativeTasks = () => {
   const [tasks, setTasks] = useState([
     { id: 1, name: "Vérifier les réservations en ligne", done: false, category: "Réservations", priority: "moyenne" },
     { id: 2, name: "Mettre à jour le PMS", done: false, category: "Système", priority: "haute" },
     { id: 3, name: "Préparer les rapports quotidiens", done: false, category: "Rapports", priority: "basse" },
     { id: 4, name: "Coordonner avec le service de ménage", done: false, category: "Ménage", priority: "moyenne" },
+    { id: 5, name: "Vérifier les stocks mini-bar", done: false, category: "Stocks", priority: "haute" },
+    { id: 6, name: "Planifier les maintenances", done: false, category: "Maintenance", priority: "moyenne" },
+    // Nouvelles tâches ajoutées
+    { id: 7, name: "Gérer les plaintes clients", done: false, category: "Assistance client", priority: "haute" },
+    { id: 8, name: "Vérifier les équipements", done: false, category: "Maintenance", priority: "moyenne" },
+    { id: 9, name: "Coordonner avec le service restauration", done: false, category: "Réservations", priority: "basse" },
+    { id: 10, name: "Préparer les événements spéciaux", done: false, category: "Événements", priority: "haute" },
+    { id: 11, name: "Mettre à jour les politiques internes", done: false, category: "Système", priority: "moyenne" },
+    { id: 12, name: "Gérer les demandes spéciales", done: false, category: "Assistance client", priority: "haute" },
   ]);
 
   const [newTask, setNewTask] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
 
+  // Toggle task status (done/undone)
   const toggleTask = (id) => {
     setTasks(tasks.map(task => 
       task.id === id ? { ...task, done: !task.done } : task
     ));
   };
 
+  // Add a new task
   const addTask = () => {
     if (newTask.trim()) {
       setTasks([...tasks, {
@@ -864,7 +1195,6 @@ const AdministrativeTasks = () => {
       setNewTask("");
     }
   };
-
   const filteredTasks = tasks.filter(task => {
     const categoryMatch = categoryFilter === "all" || task.category === categoryFilter;
     const priorityMatch = priorityFilter === "all" || task.priority === priorityFilter;
@@ -929,22 +1259,22 @@ const AdministrativeTasks = () => {
   );
 };
 
-// Composant Conversation
+// Composant pour la gestion des conversations (Réceptionniste <-> Administrateur)
 const Conversation = () => {
   const [messages, setMessages] = useState([
     {
       id: 1,
       sender: "Admin",
       content: "Bonjour, comment puis-je vous aider aujourd'hui?",
-      timestamp: "10:30",
+      timestamp: "10:30 AM",
       incoming: true
     },
     {
       id: 2,
-      sender: "Receptionist",
-      content: "J'ai besoin d'aide avec une réservation",
-      timestamp: "10:32",
-      incoming: false
+      sender: "FemmeDeMenage",
+      content: "J'ai terminé le ménage de la chambre 101.",
+      timestamp: "10:45 AM",
+      incoming: true
     }
   ]);
   const [newMessage, setNewMessage] = useState("");
@@ -962,24 +1292,22 @@ const Conversation = () => {
       setMessages([...messages, message]);
       setNewMessage("");
 
-      // Simuler une réponse après 1 seconde
+      // Simuler une réponse automatique du destinataire après 2 secondes
       setTimeout(() => {
-        const reply = {
+        const response = {
           id: Date.now() + 1,
           sender: selectedContact,
-          content: `Nous traitons votre demande.`,
+          content: `Votre message a été reçu. Nous traiterons cela rapidement.`,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           incoming: true
         };
-        setMessages(prev => [...prev, reply]);
-      }, 1000);
+        setMessages((prev) => [...prev, response]);
+      }, 2000);
     }
   };
 
   return (
-    <div className="container conversation">
-      <h2>Conversation</h2>
-      
+    <div className="chat-section">
       <div className="chat-container">
         <div className="contact-list">
           <div
@@ -996,36 +1324,67 @@ const Conversation = () => {
             className={`contact ${selectedContact === "Responsable de service de menage" ? "active" : ""}`}
             onClick={() => setSelectedContact("Responsable de service de menage")}
           >
-            <img src={menage} alt="Nadia Slimani" className="contact-avatar" />
-            <div className="contact-info">
+
+             <img src={menage} alt="Admin" className="contact-avatar" />
+
+             <div className="contact-info">
               <div className="contact-name">Nadia Slimani</div>
               <div className="contact-status">En ligne</div>
             </div>
           </div>
+          <div
+            className={`contact ${selectedContact === "Responsable de service compatible" ? "active" : ""}`}
+            onClick={() => setSelectedContact("Responsable de service compatible")}
+          >
+            <img src={compatible} alt="Admin" className="contact-avatar" />
+
+            <div className="contact-info">
+              <div className="contact-name">Thomas Moreau</div>
+              <div className="contact-status">En ligne</div>
+            </div>
+          </div>
+          {/* Ajoutez d'autres contacts ici */}
         </div>
         
         <div className="chat-area">
-          <div className="messages">
-            {messages.map((msg) => (
-              <div 
-                key={msg.id} 
-                className={`message ${msg.incoming ? 'incoming' : 'outgoing'}`}
-              >
-                <div className="message-content">{msg.content}</div>
-                <div className="message-timestamp">{msg.timestamp}</div>
+          <div className="chat-header">
+            
+            <div className="chat-info">
+              <div className="chat-name">
+                {selectedContact === "Admin" 
+                  ? "Administrateur" 
+                  : selectedContact === "Responsable de service de menage" 
+                    ? "Responsable de service de menage" 
+                    : "Responsable de service compatible"}
+              </div>
+              <div className="chat-status">En ligne</div>
+            </div>
+          </div>
+          
+          <div className="chat-messages">
+            {messages
+              .filter(msg => msg.sender === selectedContact || msg.incoming === false)
+              .map((msg) => (
+              <div key={msg.id} className={`message ${msg.incoming ? 'message-incoming' : 'message-outgoing'}`}>
+                <div className="message-bubble">
+                  <p>{msg.content}</p>
+                  <div className="message-timestamp">{msg.timestamp}</div>
+                </div>
               </div>
             ))}
           </div>
           
-          <div className="message-input">
-            <input
-              type="text"
+          <div className="chat-input">
+            <textarea
+              className="message-input"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Écrivez votre message..."
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              rows="1"
             />
-            <button onClick={handleSendMessage}>Envoyer</button>
+            <button className="send-button" onClick={handleSendMessage}>
+              Envoyer
+            </button>
           </div>
         </div>
       </div>

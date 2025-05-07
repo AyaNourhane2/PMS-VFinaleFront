@@ -180,7 +180,7 @@ const HousekeepingDashboard = () => {
 
   const handleLogout = () => {
     alert("Déconnexion réussie !");
-    navigate("/");
+    navigate("/employee");
   };
 
   const availableRooms = rooms.length > 0

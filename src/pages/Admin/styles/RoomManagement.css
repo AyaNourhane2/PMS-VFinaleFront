@@ -3,7 +3,8 @@
 .room-management {
     font-family: 'Poppins', sans-serif;
     max-width: 1200px;
-    margin: 0 auto;
+    margin-left: 350px;
+
     padding: 40px;
     background: linear-gradient(135deg, #f0eeed, #dfdbd8); /* Dégradé marron chaud */
     border-radius: 16px;

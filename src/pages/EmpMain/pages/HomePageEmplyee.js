@@ -1,7 +1,11 @@
+
+
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../Style/HomePage.css";
 import LoginModal from "../pages/LoginModal";
+import { FaSignOutAlt } from "react-icons/fa"; // Import de l'icône de déconnexion
 
 // Importation des images
 import receptionistImage from "../assets/receptioniste.webp";
@@ -16,21 +20,21 @@ const HomePage = () => {
   const roles = [
     {
       id: 1,
-      name: "Réceptionniste",
+      name: "Agent d'accueil",
       image: receptionistImage,
       description: "Gestion des réservations, des clients et des factures.",
       path: "/employee/receptionist",
     },
     {
       id: 2,
-      name: "Femme de Ménage",
+      name: "Chef d'équipe propreté",
       image: housekeepingImage,
       description: "Gestion du nettoyage des chambres et des produits.",
       path: "/employee/housekeeping",
     },
     {
       id: 3,
-      name: "Service Comptable",
+      name: "Gestionnaire de service compatible",
       image: serviceImage,
       description: "Gestion des commandes et des services additionnels.",
       path: "/employee/accounting",
@@ -40,6 +44,10 @@ const HomePage = () => {
   const handleRoleClick = (path) => {
     setSelectedRolePath(path);
     setShowModal(true);
+  };
+
+  const handleLogout = () => {
+    navigate("/login");
   };
 
   return (
@@ -73,12 +81,20 @@ const HomePage = () => {
         />
       )}
 
-      <button 
-        className="service-button" 
-        onClick={() => navigate("/employee/services")}
-      >
-        Service Général
-      </button>
+      <div className="action-buttons">
+        <button 
+          className="service-button" 
+          onClick={() => navigate("/employee/services")}
+        >
+          Service Général
+        </button>
+        <button 
+          className="service-button logout-button" 
+          onClick={handleLogout}
+        >
+          <FaSignOutAlt className="button-icon" /> Déconnexion
+        </button>
+      </div>
     </div>
   );
 };
