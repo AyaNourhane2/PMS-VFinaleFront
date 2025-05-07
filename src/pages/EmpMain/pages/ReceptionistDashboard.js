@@ -1434,15 +1434,15 @@ const Conversation = () => {
       id: 1,
       sender: "Admin",
       content: "Bonjour, comment puis-je vous aider aujourd'hui?",
-      timestamp: "10:30 AM",
+      timestamp: "10:30",
       incoming: true
     },
     {
       id: 2,
-      sender: "FemmeDeMenage",
-      content: "J'ai terminé le ménage de la chambre 101.",
-      timestamp: "10:45 AM",
-      incoming: true
+      sender: "Receptionist",
+      content: "J'ai besoin d'aide avec une réservation",
+      timestamp: "10:32",
+      incoming: false
     }
   ]);
   const [newMessage, setNewMessage] = useState("");
@@ -1460,17 +1460,17 @@ const Conversation = () => {
       setMessages([...messages, message]);
       setNewMessage("");
 
-      // Simuler une réponse automatique du destinataire après 2 secondes
+      // Simulate reply after 1 second
       setTimeout(() => {
-        const response = {
+        const reply = {
           id: Date.now() + 1,
           sender: selectedContact,
-          content: `Votre message a été reçu. Nous traiterons cela rapidement.`,
+          content: `Nous traitons votre demande.`,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           incoming: true
         };
-        setMessages((prev) => [...prev, response]);
-      }, 2000);
+        setMessages(prev => [...prev, reply]);
+      }, 1000);
     }
   };
 
@@ -1492,10 +1492,8 @@ const Conversation = () => {
             className={`contact ${selectedContact === "Responsable de service de menage" ? "active" : ""}`}
             onClick={() => setSelectedContact("Responsable de service de menage")}
           >
-
-             <img src={menage} alt="Admin" className="contact-avatar" />
-
-             <div className="contact-info">
+            <img src={menage} alt="Nadia Slimani" className="contact-avatar" />
+            <div className="contact-info">
               <div className="contact-name">Nadia Slimani</div>
               <div className="contact-status">En ligne</div>
             </div>
@@ -1504,53 +1502,49 @@ const Conversation = () => {
             className={`contact ${selectedContact === "Responsable de service compatible" ? "active" : ""}`}
             onClick={() => setSelectedContact("Responsable de service compatible")}
           >
-            <img src={compatible} alt="Admin" className="contact-avatar" />
-
+            <img src={compatible} alt="Thomas Moreau" className="contact-avatar" />
             <div className="contact-info">
               <div className="contact-name">Thomas Moreau</div>
               <div className="contact-status">En ligne</div>
             </div>
           </div>
-          {/* Ajoutez d'autres contacts ici */}
         </div>
         
         <div className="chat-area">
           <div className="chat-header">
-            
             <div className="chat-info">
               <div className="chat-name">
                 {selectedContact === "Admin" 
-                  ? "Administrateur" 
+                  ? "Lucas Bernard (Administrateur)" 
                   : selectedContact === "Responsable de service de menage" 
-                    ? "Responsable de service de menage" 
-                    : "Responsable de service compatible"}
+                    ? "Nadia Slimani (Service de ménage)" 
+                    : "Thomas Moreau (Service compatible)"}
               </div>
               <div className="chat-status">En ligne</div>
             </div>
           </div>
           
-          <div className="chat-messages">
-            {messages
-              .filter(msg => msg.sender === selectedContact || msg.incoming === false)
-              .map((msg) => (
-              <div key={msg.id} className={`message ${msg.incoming ? 'message-incoming' : 'message-outgoing'}`}>
-                <div className="message-bubble">
-                  <p>{msg.content}</p>
-                  <div className="message-timestamp">{msg.timestamp}</div>
-                </div>
+          <div className="messages">
+            {messages.map((msg) => (
+              <div 
+                key={msg.id} 
+                className={`message ${msg.incoming ? 'admin' : 'receptionist'}`}
+              >
+                <div className="message-content">{msg.content}</div>
+                <div className="message-timestamp">{msg.timestamp}</div>
               </div>
             ))}
           </div>
           
-          <div className="chat-input">
-            <textarea
-              className="message-input"
+          <div className="message-input">
+            <input
+              type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Écrivez votre message..."
-              rows="1"
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
             />
-            <button className="send-button" onClick={handleSendMessage}>
+            <button onClick={handleSendMessage}>
               Envoyer
             </button>
           </div>
@@ -1632,43 +1626,43 @@ const ReceptionistDashboard = () => {
     setActiveSection(buttonName);
     switch (buttonName) {
       case "Tableau de Bord":
-        navigate("/receptionist");
+        navigate("");
         break;
         case "Conversation":
-          navigate("/receptionist/conversation");
+          navigate("conversation");
           break;
         case "Gestion des Approbations":
-          navigate("/admin/approval");
+          navigate("approval");
           break;
       
       case "Authentifier une Réservation":
-        navigate("/receptionist/authenticate");
+        navigate("authenticate");
         break;
       case "Créer une Réservation":
-        navigate("/receptionist/create-reservation");
+        navigate("create-reservation");
         break;
       
      
       case "Gestion des Chambres":
-        navigate("/receptionist/room-management");
+        navigate("room-management");
         break;
      
       case "Tâches Administratives":
-        navigate("/receptionist/administrative");
+        navigate("administrative");
         break;
       
       default:
-        navigate("/receptionist");
+        navigate("");
         break;
         case "Demandes de Réservation":
-      navigate("/receptionist/reservation-requests");
+      navigate("reservation-requests");
       break;
     }
   };
 
   const handleLogout = () => {
     alert("Déconnexion réussie");
-    navigate("/");
+    navigate("/employee");
   };
 
   return (
