@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaSignOutAlt } from "react-icons/fa";
-import "./sidebar.css";
+import "./sidebar.css"; // Assurez-vous d'avoir ce fichier CSS
 
 const Sidebar = ({ 
   buttons = [], 
@@ -8,7 +8,7 @@ const Sidebar = ({
   activeButton = "", 
   onLogout = () => {}, 
   dashboardName = "Dashboard", 
-  profileImage = "https://via.placeholder.com/150" 
+  profileImage = "../assets/profilereceptioniste.webp" 
 }) => {
   const [isOpen, setIsOpen] = useState(true);
 
@@ -17,7 +17,7 @@ const Sidebar = ({
   };
 
   return (
-    <div className={`sidebar-container ${isOpen ? "open" : "closed"}`}>
+    <div className="sidebar-container">
       <button className="sidebar-toggle" onClick={toggleSidebar}>
         {isOpen ? "◄" : "►"}
       </button>
@@ -33,13 +33,12 @@ const Sidebar = ({
               e.target.src = "https://via.placeholder.com/150";
             }}
           />
-          {isOpen && <h2 className="profile-name">{dashboardName}</h2>}
+          {isOpen && <h1 className="dashboard-title">{dashboardName}</h1>}
         </div>
 
         <nav className="navigation">
           <ul className="menu-list">
-            {/* Vérification que buttons existe avant de mapper */}
-            {buttons && buttons.map((button, index) => (
+            {buttons.map((button, index) => (
               <li
                 key={`${button.name}-${index}`}
                 className={`menu-item ${button.name === activeButton ? "active" : ""}`}
