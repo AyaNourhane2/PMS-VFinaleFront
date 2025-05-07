@@ -1,84 +1,130 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../styles/MessagesAndEmails.css';
+import receptioniste from '../assets/receptioniste.png'; // Assurez-vous que ces images existent
+import menage from '../assets/menage.jpg';
+import compatible from '../assets/compatible.jpg';
 
 const MessagesAndEmails = () => {
-  // États pour gérer les messages et le nouveau message
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      sender: "Admin",
+      content: "Bonjour, comment puis-je vous aider aujourd'hui?",
+      timestamp: "10:30 AM",
+      incoming: true
+    },
+    {
+      id: 2,
+      sender: "FemmeDeMenage",
+      content: "J'ai terminé le ménage de la chambre 101.",
+      timestamp: "10:45 AM",
+      incoming: true
+    }
+  ]);
+  const [newMessage, setNewMessage] = useState("");
+  const [selectedContact, setSelectedContact] = useState("Admin");
 
-  // Employé par défaut
-  const defaultEmployee = {
-    id: 1,
-    name: 'Anita Mahre',
-    role: 'Réceptioniste',
-  };
-
-  // Charger les messages initiaux
-  useEffect(() => {
-    const demoMessages = [
-      { id: 1, sender: 'admin', text: 'Bonjour, comment puis-je vous aider?', time: '10:00 AM' },
-      { id: 2, sender: 'employee', text: 'J\'ai un problème avec le nouveau projet.', time: '10:05 AM' },
-      { id: 3, sender: 'admin', text: 'Dites-moi en quoi je peux vous aider.', time: '10:10 AM' },
-    ];
-    setMessages(demoMessages);
-  }, []);
-
-  // Envoyer un nouveau message
   const handleSendMessage = () => {
-    if (newMessage.trim() === '') return;
-
-    const newMsg = {
-      id: messages.length + 1,
-      sender: 'admin',
-      text: newMessage,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    };
-
-    setMessages([...messages, newMsg]);
-    setNewMessage('');
-
-    // Simuler une réponse automatique
-    setTimeout(() => {
-      const autoReply = {
-        id: messages.length + 2,
-        sender: 'employee',
-        text: 'Merci pour votre réponse, je vais regarder ça.',
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    if (newMessage.trim()) {
+      const message = {
+        id: Date.now(),
+        sender: "Receptionist",
+        content: newMessage,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        incoming: false
       };
-      setMessages(prev => [...prev, autoReply]);
-    }, 2000);
+      setMessages([...messages, message]);
+      setNewMessage("");
+
+      // Simuler une réponse automatique du destinataire après 2 secondes
+      setTimeout(() => {
+        const response = {
+          id: Date.now() + 1,
+          sender: selectedContact,
+          content: `Votre message a été reçu. Nous traiterons cela rapidement.`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          incoming: true
+        };
+        setMessages((prev) => [...prev, response]);
+      }, 2000);
+    }
   };
 
   return (
-    <div className="chat-app">
-      {/* Zone de conversation principale */}
+    <div className="chat-section">
       <div className="chat-container">
-        <div className="chat-header">
-          <h3>Conversation avec {defaultEmployee.name}</h3>
-          <p>{defaultEmployee.role}</p>
-        </div>
-
-        <div className="messages-container">
-          {messages.map(message => (
-            <div 
-              key={message.id} 
-              className={`message ${message.sender === 'admin' ? 'admin-message' : 'employee-message'}`}
-            >
-              <p>{message.text}</p>
-              <span className="message-time">{message.time}</span>
+        <div className="contact-list">
+          <div
+            className={`contact ${selectedContact === "receptioniste" ? "active" : ""}`}
+            onClick={() => setSelectedContact("receptioniste")}
+          >
+            <img src={receptioniste} alt="receptioniste" className="contact-avatar" />
+            <div className="contact-info">
+              <div className="contact-name">Paul Hugo</div>
+              <div className="contact-status">En ligne</div>
             </div>
-          ))}
+          </div>
+          <div
+            className={`contact ${selectedContact === "Responsable de service de menage" ? "active" : ""}`}
+            onClick={() => setSelectedContact("Responsable de service de menage")}
+          >
+            <img src={menage} alt="Responsable de service de menage" className="contact-avatar" />
+            <div className="contact-info">
+              <div className="contact-name">Nadia Slimani</div>
+              <div className="contact-status">En ligne</div>
+            </div>
+          </div>
+          <div
+            className={`contact ${selectedContact === "Responsable de service compatible" ? "active" : ""}`}
+            onClick={() => setSelectedContact("Responsable de service compatible")}
+          >
+            <img src={compatible} alt="Responsable de service compatible" className="contact-avatar" />
+            <div className="contact-info">
+              <div className="contact-name">Thomas Moreau</div>
+              <div className="contact-status">En ligne</div>
+            </div>
+          </div>
         </div>
-
-        <div className="message-input">
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Écrivez votre message..."
-            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-          />
-          <button onClick={handleSendMessage}>Envoyer</button>
+        
+        <div className="chat-area">
+          <div className="chat-header">
+            <div className="chat-info">
+              <div className="chat-name">
+                {selectedContact === "receptioniste" 
+                  ? "Reseptioniste" 
+                  : selectedContact === "Responsable de service de menage" 
+                    ? "Responsable de service de menage" 
+                    : "Responsable de service compatible"}
+              </div>
+              <div className="chat-status">En ligne</div>
+            </div>
+          </div>
+          
+          <div className="chat-messages">
+            {messages
+              .filter(msg => msg.sender === selectedContact || msg.incoming === false)
+              .map((msg) => (
+                <div key={msg.id} className={`message ${msg.incoming ? 'message-incoming' : 'message-outgoing'}`}>
+                  <div className="message-bubble">
+                    <p>{msg.content}</p>
+                    <div className="message-timestamp">{msg.timestamp}</div>
+                  </div>
+                </div>
+              ))}
+          </div>
+          
+          <div className="chat-input">
+            <textarea
+              className="message-input"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Écrivez votre message..."
+              rows="1"
+            />
+            <button className="send-button" onClick={handleSendMessage}>
+              Envoyer
+            </button>
+          </div>
         </div>
       </div>
     </div>

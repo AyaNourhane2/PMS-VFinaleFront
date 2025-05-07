@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
-//import '../styles/Reports.css';
+
 
 // Palette de couleurs pour les graphiques
 const COLORS = ['#6c5ce7', '#00b894', '#ff7675', '#fdcb6e', '#74b9ff'];

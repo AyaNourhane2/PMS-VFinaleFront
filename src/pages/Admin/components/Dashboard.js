@@ -14,7 +14,7 @@ import Navbar2 from './Navbar2';
 
 const Dashboard = () => {
   const [date, setDate] = useState(new Date());
-  const [searchTerm, setSearchTerm] = useState('');
+  
 
   // Données pour les services supplémentaires
   const additionalServicesData = [
@@ -25,34 +25,11 @@ const Dashboard = () => {
     { name: 'Service d\'étage', value: 60 },
   ];
 
-  // Données pour les services compatibles
-  const compatibleServicesData = [
-    { month: 'Jan', Taxes: 1200, Paiements: 3000, Factures: 2500 },
-    { month: 'Fév', Taxes: 1300, Paiements: 3200, Factures: 2600 },
-    { month: 'Mar', Taxes: 1400, Paiements: 3400, Factures: 2700 },
-    { month: 'Avr', Taxes: 1500, Paiements: 3600, Factures: 2800 },
-    { month: 'Mai', Taxes: 1600, Paiements: 3800, Factures: 2900 },
-    { month: 'Juin', Taxes: 1700, Paiements: 4000, Factures: 3000 },
-    { month: 'Juil', Taxes: 1800, Paiements: 4200, Factures: 3100 },
-  ];
+  
 
-  // Données pour les services de ménage
-  const cleaningServicesData = [
-    { subject: 'Tâches de Ménage', A: 80, fullMark: 100 },
-    { subject: 'Demandes Spéciales', A: 60, fullMark: 100 },
-    { subject: 'Commande de Produits', A: 70, fullMark: 100 },
-    { subject: 'Suivi Personnel', A: 90, fullMark: 100 },
-  ];
+  
 
-  // Nouvelles données pour les performances du personnel
-  const staffPerformanceData = [
-    { name: 'Jean D.', efficiency: 85, tasksCompleted: 42, hoursWorked: 35 },
-    { name: 'Marie L.', efficiency: 92, tasksCompleted: 38, hoursWorked: 32 },
-    { name: 'Pierre T.', efficiency: 78, tasksCompleted: 35, hoursWorked: 40 },
-    { name: 'Sophie B.', efficiency: 88, tasksCompleted: 45, hoursWorked: 38 },
-    { name: 'Luc M.', efficiency: 95, tasksCompleted: 50, hoursWorked: 45 },
-    { name: 'Emma R.', efficiency: 82, tasksCompleted: 36, hoursWorked: 34 },
-  ];
+  
 
   // Données pour la répartition du personnel (modifiée)
   const staffDistributionData = [
@@ -75,12 +52,7 @@ const Dashboard = () => {
     { name: 'Chambres Disponibles', value: 25 },
   ];
 
-  const scatterChartData = staffPerformanceData.map(staff => ({
-    x: staff.hoursWorked,
-    y: staff.tasksCompleted,
-    z: staff.efficiency,
-    name: staff.name
-  }));
+  
 
   // Couleurs personnalisées pour le thème marron/beige
   const COLORS = {
@@ -206,49 +178,7 @@ const Dashboard = () => {
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="chart-container">
-            <h2>Tendances des Services Compatibles</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={compatibleServicesData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={COLORS.lightBrown} />
-                <XAxis dataKey="month" stroke={COLORS.darkBrown} />
-                <YAxis stroke={COLORS.darkBrown} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: COLORS.cream,
-                    borderColor: COLORS.mediumBrown,
-                    borderRadius: '6px',
-                    fontSize: '14px'
-                  }}
-                  itemStyle={{ color: COLORS.darkBrown }}
-                />
-                <Legend 
-                  wrapperStyle={{ color: COLORS.darkBrown }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="Taxes" 
-                  stroke="#5E3023" 
-                  activeDot={{ r: 8, fill: '#5E3023', stroke: '#fff', strokeWidth: 2 }} 
-                  name="Taxes"
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="Paiements" 
-                  stroke="#8B4513" 
-                  activeDot={{ r: 8, fill: '#8B4513', stroke: '#fff', strokeWidth: 2 }} 
-                  name="Paiements"
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="Factures" 
-                  stroke="#A0522D" 
-                  activeDot={{ r: 8, fill: '#A0522D', stroke: '#fff', strokeWidth: 2 }} 
-                  name="Factures"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+          
         </div>
         <div className="dashboard-right">
           <div className="hotel-image-container">
@@ -322,132 +252,8 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Performance des Services de Ménage */}
-          <div className="chart-container-small">
-            <h2>Performance des Services de Ménage</h2>
-            <ResponsiveContainer width="100%" height={150}>
-              <RadarChart 
-                cx="50%" 
-                cy="50%" 
-                outerRadius="80%" 
-                data={cleaningServicesData}
-              >
-                <PolarGrid stroke={COLORS.lightBrown} />
-                <PolarAngleAxis 
-                  dataKey="subject" 
-                  stroke={COLORS.darkBrown}
-                />
-                <PolarRadiusAxis 
-                  stroke={COLORS.darkBrown}
-                />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: COLORS.cream,
-                    borderColor: COLORS.mediumBrown,
-                    borderRadius: '6px',
-                    fontSize: '14px'
-                  }}
-                  itemStyle={{ color: COLORS.darkBrown }}
-                />
-                <Radar 
-                  name="Performance" 
-                  dataKey="A" 
-                  stroke={COLORS.mediumBrown}
-                  fill={COLORS.lightBrown}
-                  fillOpacity={0.6}
-                />
-                <Legend 
-                  wrapperStyle={{ 
-                    color: COLORS.darkBrown,
-                    paddingTop: '10px'
-                  }}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Performances du Personnel */}
-          <div className="chart-container-small">
-            <h2>Performances du Personnel</h2>
-            <ResponsiveContainer width="100%" height={150}>
-              <ScatterChart
-                margin={{
-                  top: 20,
-                  right: 20,
-                  bottom: 20,
-                  left: 20,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke={COLORS.lightBrown} />
-                <XAxis 
-                  type="number" 
-                  dataKey="x" 
-                  name="Heures" 
-                  unit="h" 
-                  stroke={COLORS.darkBrown}
-                  label={{ value: 'Heures travaillées', position: 'bottom', fill: COLORS.darkBrown }}
-                />
-                <YAxis 
-                  type="number" 
-                  dataKey="y" 
-                  name="Tâches" 
-                  unit="" 
-                  stroke={COLORS.darkBrown}
-                  label={{ value: 'Tâches accomplies', angle: -90, position: 'left', fill: COLORS.darkBrown }}
-                />
-                <ZAxis 
-                  type="number" 
-                  dataKey="z" 
-                  range={[60, 400]} 
-                  name="Efficacité" 
-                  unit="%"
-                />
-                <Tooltip 
-                  cursor={{ strokeDasharray: '3 3' }}
-                  contentStyle={{
-                    backgroundColor: COLORS.cream,
-                    borderColor: COLORS.mediumBrown,
-                    borderRadius: '6px'
-                  }}
-                  formatter={(value, name, props) => {
-                    if (name === 'Efficacité') return [`${value}%`, name];
-                    if (name === 'Tâches') return [value, 'Tâches accomplies'];
-                    if (name === 'Heures') return [value, 'Heures travaillées'];
-                    return [value, name];
-                  }}
-                />
-                <Legend 
-                  wrapperStyle={{ color: COLORS.darkBrown }}
-                  formatter={(value) => {
-                    if (value === 'x') return 'Heures travaillées';
-                    if (value === 'y') return 'Tâches accomplies';
-                    if (value === 'z') return 'Efficacité (%)';
-                    return value;
-                  }}
-                />
-                <Scatter 
-                  name="Performance" 
-                  data={scatterChartData} 
-                  fill={COLORS.mediumBrown}
-                  shape="circle"
-                >
-                  {scatterChartData.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={[
-                        COLORS.darkBrown,
-                        COLORS.mediumBrown,
-                        COLORS.sienna,
-                        '#895737',
-                        '#A88B76',
-                        '#5E3023'
-                      ][index % 6]}
-                    />
-                  ))}
-                </Scatter>
-              </ScatterChart>
-            </ResponsiveContainer>
-          </div>
+          
+          
         </div>
       </div>
     </div>

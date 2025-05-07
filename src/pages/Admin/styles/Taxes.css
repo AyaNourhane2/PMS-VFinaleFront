@@ -1,56 +1,158 @@
 /* components/Taxes.css */
 .taxes-container {
-    padding: 0; /* Supprimer le padding */
-    background-color: #ffffff;
-    box-shadow: none; /* Supprimer l'ombre */
-    margin: 20px auto;
-    max-width: 100%; /* Ajustez la largeur maximale */
+    padding: 0;
+    background-color: #fffaf5;  /* Fond crème légèrement rosé */
+    margin: 24px ;
+    margin-left: 30px;
+    max-width: 100%;
     font-family: 'Lato', Arial, sans-serif;
-    overflow-x: auto; /* Permettre le défilement horizontal si nécessaire */
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(94, 71, 44, 0.08);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #e8d5c0; /* Bordure beige-marron plus soutenue */
+}
+
+.taxes-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #b08e6b, #6d4c2b); /* Dégradé marron terreux */
 }
 
 .taxes-title {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
+    font-size: 28px;
+    font-weight: 700;
+    color: #5c3a21; /* Marron chocolat */
     text-align: center;
-    margin-bottom: 10px; /* Réduire l'espace inférieur */
+    margin: 24px 0;
+    position: relative;
+    padding-bottom: 12px;
+}
+
+.taxes-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(to right, #d2b48c, #a07855); /* Dégradé marron sable */
+    border-radius: 3px;
 }
 
 .taxes-table {
     width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed; /* Évite les décalages si le contenu dépasse */
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
 }
 
 .taxes-table th,
 .taxes-table td {
     text-align: left;
-    padding: 8px; /* Réduire le padding */
-    border-bottom: 1px solid #e9e9e9;
-    white-space: nowrap; /* Évite les retours à la ligne */
+    padding: 16px 20px;
+    border-bottom: 1px solid #e0cdb5; /* Bordure marron clair */
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Affiche des points d'ellipse s'il y a trop de texte */
+    text-overflow: ellipsis;
+    transition: all 0.3s ease;
 }
 
 .taxes-table thead {
-    background-color: #f9f9f9;
+    background-color: #f6ede2; /* Fond beige chaud */
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .taxes-table th {
-    font-weight: bold;
-    color: #333;
+    font-weight: 700;
+    color: #4a351e; /* Marron foncé intense */
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    text-transform: capitalize;
+    border-bottom: 2px solid #c9b18b; /* Ligne marron doré */
 }
 
 .taxes-table td {
-    color: #666;
+    color: #6e5c45; /* Marron taupe */
+    font-size: 15px;
+    vertical-align: middle;
 }
 
-/* Si vous souhaitez des lignes alternées avec un fond clair */
+.taxes-table tr:not(:last-child) td {
+    border-bottom: 1px solid #f1e7d8; /* Ligne beige rosé */
+}
+
 .taxes-table tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: #faf3e9; /* Fond crème doré */
 }
 
-.taxes-table tr:hover {
-    background-color: #f1f1f1;
+.taxes-table tr:hover td {
+    background-color: #f2e4d3; /* Beige cuivré au survol */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(94, 71, 44, 0.1);
+}
+
+.taxes-table tr:hover td:first-child {
+    border-radius: 8px 0 0 8px;
+}
+
+.taxes-table tr:hover td:last-child {
+    border-radius: 0 8px 8px 0;
+}
+
+/* Coins arrondis */
+.taxes-table tr:first-child th:first-child {
+    border-top-left-radius: 12px;
+}
+
+.taxes-table tr:first-child th:last-child {
+    border-top-right-radius: 12px;
+}
+
+.taxes-table tr:last-child td:first-child {
+    border-bottom-left-radius: 12px;
+}
+
+.taxes-table tr:last-child td:last-child {
+    border-bottom-right-radius: 12px;
+}
+
+/* Effet de surbrillance */
+.taxes-table td:hover {
+    color: #8c6a3e; /* Marron doré intense */
+}
+
+/* Cellules importantes */
+.taxes-table .highlight {
+    font-weight: 600;
+    color: #5c3a21;
+    background-color: #f0e0cb; /* Fond marron clair */
+    border-left: 3px solid #b08e6b;
+}
+
+/* Barre de défilement */
+.taxes-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.taxes-container::-webkit-scrollbar-track {
+    background: #f1e7d8;
+    border-radius: 4px;
+}
+
+.taxes-container::-webkit-scrollbar-thumb {
+    background: #c9b18b;
+    border-radius: 4px;
+}
+
+.taxes-container::-webkit-scrollbar-thumb:hover {
+    background: #a78b6f;
 }

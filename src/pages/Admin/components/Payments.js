@@ -82,10 +82,10 @@ const Payments = () => {
       <table className="payments-table">
         <thead>
           <tr>
-            <th>Client Name</th>
-            <th>Amount</th>
-            <th>Date</th>
-            <th>Payment Method</th>
+            <th>Nom du client</th>
+            <th>Mantant Totale</th>
+            <th>Date de paiement</th>
+            <th>Mode de paiement</th>
           </tr>
         </thead>
         <tbody>

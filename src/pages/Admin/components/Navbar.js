@@ -16,18 +16,16 @@ function Navbar({ adminName }) {
 
   const navItems = [
     { icon: <FaTachometerAlt />, label: 'Tableau de bord', tab: 'dashboard' },
-    { icon: <FaBed />, label: 'Chambres', tab: 'room-management' },
-    { icon: <FaCalendarAlt />, label: 'Réservations', tab: 'reservations' },
-    { icon: <FaUsers />, label: 'Clients', tab: 'users' },
-    { icon: <FaEnvelope />, label: 'Messages', tab: 'messages' },
-    { icon: <FaConciergeBell />, label: 'Services', tab: 'services' },
-    { icon: <FaMoneyBillWave />, label: 'Paiements', tab: 'payments' },
-    { icon: <FaFileInvoiceDollar />, label: 'Factures', tab: 'invoices' },
-    { icon: <FaFileInvoice />, label: 'Taxes', tab: 'taxes' },
-    { icon: <FaWarehouse />, label: 'Stocks & Commandes', tab: 'cleaning' },
-    { icon: <FaTasks />, label: 'Tâches & Demandes', tab: 'cleaning-tasks' },
-    { icon: <FaUserCheck />, label: 'Suivi Personnel', tab: 'staff-tracking' },
-    { icon: <FaCog />, label: 'Paramètres', tab: 'settings' },
+          { icon: <FaBed />, label: 'Chambres', tab: 'rooms' },
+          { icon: <FaCalendarAlt />, label: 'Réservations', tab: 'reservations' },
+          { icon: <FaUsers />, label: 'Clients', tab: 'users' },
+          { icon: <FaEnvelope />, label: 'Messages', tab: 'messages' },
+          { icon: <FaConciergeBell />, label: 'Services', tab: 'services' },
+          { icon: <FaMoneyBillWave />, label: 'Paiements', tab: 'payments' },
+        
+          { icon: <FaFileInvoice />, label: 'Taxes', tab: 'taxes' },
+          {  icon: <FaWarehouse />, label: 'Gestion de Stocks & Commande de produits', tab: 'cleaning' },
+          { icon: <FaCog />, label: 'Paramètres', tab: 'settings' }, // Ajoutez l'option Paramètres
   ];
 
   const toggleNavbar = () => setIsCollapsed(!isCollapsed);
@@ -52,7 +50,7 @@ function Navbar({ adminName }) {
           {!isCollapsed && (
             <div className="logo-text-container">
               <span className="logo-text">RoyelStay</span>
-              <span className="logo-subtext">Admin Panel</span>
+              <span className="logo-subtext">Hotel de Luxe</span>
             </div>
           )}
         </div>
@@ -64,17 +62,7 @@ function Navbar({ adminName }) {
 
       <div className="nav-divider"></div>
 
-      <div className="nav-profile">
-        <div className="profile-avatar">
-          {adminName?.charAt(0).toUpperCase() || 'A'}
-        </div>
-        {!isCollapsed && (
-          <div className="profile-info">
-            <span className="profile-name">{adminName || 'Administrateur'}</span>
-            <span className="profile-role">Admin</span>
-          </div>
-        )}
-      </div>
+     
 
       <div className="nav-buttons">
         {navItems.map((item) => (
