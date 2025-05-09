@@ -12,7 +12,9 @@ body {
 .comptableService {
   padding: 30px;
   max-width: 1200px;
-  margin: 40px auto;
+  margin: 40px ;
+ 
+  margin-left: 300px;
   background: #fff;
   border-radius: 14px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
@@ -229,6 +231,7 @@ body {
 }
 
 .chat-container {
+  
   display: flex;
   height: 500px;
   border: 1px solid #e0e0e0;

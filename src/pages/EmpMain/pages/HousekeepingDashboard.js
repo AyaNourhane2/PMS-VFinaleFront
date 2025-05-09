@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
-import { FaTasks, FaShoppingCart, FaUserCheck, FaCheck, FaPlus, FaEnvelope, FaSearch } from "react-icons/fa";
-import profilefemmenage from "../assets/profilefemmemenage.webp";
+import { FaTasks, FaShoppingCart, FaUserCheck, FaCheck, FaPlus, FaEnvelope, FaSearch, FaPaperPlane, FaEdit, FaTrash } from "react-icons/fa";
+import profilefemmenage from "../assets/personnel de menage.webp";
+import profilereceptioniste from "../assets/profilereceptioniste.webp";
+import admin from "../assets/admin.jpg";
 import "../Style/housekeeping.css";
 
 const HousekeepingDashboard = () => {
@@ -25,32 +27,30 @@ const HousekeepingDashboard = () => {
   const [newMessage, setNewMessage] = useState("");
   const [staffSearchQuery, setStaffSearchQuery] = useState("");
 
-  // Fetch data from backend
+  const fetchData = async () => {
+    try {
+      const roomsResponse = await axios.get("http://localhost:5000/api/rooms");
+      setRooms(roomsResponse.data);
+
+      const tasksResponse = await axios.get("http://localhost:5000/api/housekeeping_tasks");
+      setTasks(tasksResponse.data);
+
+      const ordersResponse = await axios.get("http://localhost:5000/api/inventory_orders");
+      setInventoryOrders(ordersResponse.data);
+
+      const staffResponse = await axios.get("http://localhost:5000/api/staff");
+      setStaff(staffResponse.data);
+    } catch (error) {
+      console.error("Erreur lors du chargement des données:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const roomsResponse = await axios.get("http://localhost:5000/api/rooms");
-        setRooms(roomsResponse.data);
-
-        const tasksResponse = await axios.get("http://localhost:5000/api/housekeeping_tasks");
-        setTasks(tasksResponse.data);
-
-        const ordersResponse = await axios.get("http://localhost:5000/api/inventory_orders");
-        setInventoryOrders(ordersResponse.data);
-
-        const staffResponse = await axios.get("http://localhost:5000/api/staff");
-        setStaff(staffResponse.data);
-
-        const messagesResponse = await axios.get("http://localhost:5000/api/messages");
-        setMessages(messagesResponse.data);
-      } catch (error) {
-        console.error("Erreur lors du chargement des données:", error);
-      }
-    };
     fetchData();
+    const interval = setInterval(fetchData, 5000); // Poll every 5 seconds
+    return () => clearInterval(interval); // Cleanup on unmount
   }, []);
 
-  // Show success message with timeout
   const displaySuccessMessage = (message) => {
     setShowSuccessMessage(message);
     setTimeout(() => setShowSuccessMessage(null), 3000);
@@ -133,41 +133,6 @@ const HousekeepingDashboard = () => {
       }
     } else {
       alert("Veuillez remplir tous les champs.");
-    }
-  };
-
-  const addMessage = async () => {
-    if (newMessage.trim()) {
-      const newMessageEntry = {
-        sender: "User",
-        recipient: "Réceptionniste",
-        content: newMessage,
-        timestamp: new Date().toISOString().slice(0, 16).replace("T", " "),
-      };
-      try {
-        const response = await axios.post(
-          "http://localhost:5000/api/messages",
-          newMessageEntry
-        );
-        setMessages([...messages, response.data]);
-        setNewMessage("");
-        displaySuccessMessage("Message envoyé avec succès !");
-        setTimeout(() => {
-          const responseMessage = {
-            id: messages.length + 2,
-            sender: "Réceptionniste",
-            recipient: "User",
-            content: "Merci pour votre message. Nous vous répondrons bientôt.",
-            timestamp: new Date().toISOString().slice(0, 16).replace("T", " "),
-          };
-          setMessages((prev) => [...prev, responseMessage]);
-        }, 2000);
-      } catch (error) {
-        console.error("Erreur lors de l'envoi du message:", error);
-        alert("Impossible d'envoyer le message.");
-      }
-    } else {
-      alert("Veuillez entrer un message.");
     }
   };
 
@@ -392,9 +357,10 @@ const HousekeepingDashboard = () => {
         {activeButton === "Messages" && (
           <MessageSection
             messages={messages}
+            setMessages={setMessages}
             newMessage={newMessage}
             setNewMessage={setNewMessage}
-            addMessage={addMessage}
+            userRole="Housekeeper"
           />
         )}
       </div>
@@ -402,14 +368,138 @@ const HousekeepingDashboard = () => {
   );
 };
 
-// MessageSection component
-const MessageSection = ({ messages, newMessage, setNewMessage, addMessage }) => {
-  const [selectedContact, setSelectedContact] = useState("Réceptionniste");
+const MessageSection = ({ messages, setMessages, newMessage, setNewMessage, userRole }) => {
+  const [selectedContact, setSelectedContact] = useState("Receptionist");
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [editingMessage, setEditingMessage] = useState(null);
+  const [editContent, setEditContent] = useState("");
   const chatEndRef = useRef(null);
+
+  const contacts = [
+    { name: "Receptionist", displayName: "Paul Hugo", avatar: profilereceptioniste },
+    { name: "Admin", displayName: "Lucas Bernard", avatar: admin },
+  ];
+
+  const allowedCommunications = {
+    Housekeeper: ["Receptionist", "Admin"],
+  };
+
+  const fetchMessages = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/messages/user/Housekeeper`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
+      });
+      const filteredMessages = response.data.filter(
+        msg =>
+          (msg.sender === "Housekeeper" && allowedCommunications["Housekeeper"].includes(msg.recipient)) ||
+          (msg.recipient === "Housekeeper" && allowedCommunications["Housekeeper"].includes(msg.sender))
+      );
+      setMessages(filteredMessages.map(msg => ({
+        id: msg.id,
+        sender: msg.senderName || msg.sender,
+        recipient: msg.recipientName || msg.recipient,
+        content: msg.content,
+        timestamp: msg.timestamp
+      })));
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      setError("Impossible de charger les messages. Veuillez réessayer.");
+    }
+  };
+
+  useEffect(() => {
+    fetchMessages();
+    const interval = setInterval(fetchMessages, 3000);
+    return () => clearInterval(interval);
+  }, [selectedContact]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  const displaySuccessMessage = (message) => {
+    setSuccessMessage(message);
+    setTimeout(() => setSuccessMessage(null), 3000);
+  };
+
+  const addMessage = async () => {
+    if (!newMessage.trim()) {
+      setError("Veuillez entrer un message.");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/messages",
+        {
+          sender: userRole,
+          recipient: selectedContact,
+          content: newMessage,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          senderName: "Nadia Slimani",
+          recipientName: contacts.find(c => c.name === selectedContact)?.displayName
+        },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
+        }
+      );
+      setMessages([...messages, response.data]);
+      setNewMessage("");
+      setError(null);
+      displaySuccessMessage("Message envoyé avec succès !");
+    } catch (error) {
+      console.error("Error adding message:", error);
+      setError("Erreur lors de l’envoi du message.");
+    }
+  };
+
+  const handleEditMessage = async (messageId) => {
+    if (!editContent.trim()) {
+      setError("Le message modifié ne peut pas être vide.");
+      return;
+    }
+    try {
+      await axios.put(
+        `http://localhost:5000/api/messages/${messageId}`,
+        { content: editContent },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
+        }
+      );
+      setEditingMessage(null);
+      setEditContent("");
+      displaySuccessMessage("Message modifié avec succès !");
+      fetchMessages();
+    } catch (error) {
+      console.error("Error editing message:", error);
+      setError("Erreur lors de la modification du message.");
+    }
+  };
+
+  const handleDeleteMessage = async (messageId) => {
+    if (!window.confirm("Voulez-vous vraiment supprimer ce message ?")) return;
+    try {
+      await axios.delete(`http://localhost:5000/api/messages/${messageId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
+      });
+      displaySuccessMessage("Message supprimé avec succès !");
+      fetchMessages();
+    } catch (error) {
+      console.error("Error deleting message:", error);
+      setError("Erreur lors de la suppression du message.");
+    }
+  };
+
+  const openEditModal = (msg) => {
+    setEditingMessage(msg.id);
+    setEditContent(msg.content);
+  };
+
+  const closeEditModal = () => {
+    setEditingMessage(null);
+    setEditContent("");
+  };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -419,54 +509,62 @@ const MessageSection = ({ messages, newMessage, setNewMessage, addMessage }) => 
   };
 
   return (
-    <section className="section chat-section">
-      <h2 className="heading">Messages</h2>
+    <div className="chat-section">
+      {error && <p className="message error">{error}</p>}
+      {successMessage && <p className="message success">{successMessage}</p>}
       <div className="chat-container">
         <div className="contact-list">
-          <div
-            className={`contact ${selectedContact === "Réceptionniste" ? "active" : ""}`}
-            onClick={() => setSelectedContact("Réceptionniste")}
-          >
-            <img
-              src={profilefemmenage}
-              alt="Réceptionniste"
-              className="contact-avatar"
-            />
-            <div className="contact-info">
-              <div className="contact-name">Réceptionniste</div>
-              <div className="contact-status">Actif maintenant</div>
+          {contacts.map((contact) => (
+            <div
+              key={contact.name}
+              className={`contact ${selectedContact === contact.name ? "active" : ""}`}
+              onClick={() => setSelectedContact(contact.name)}
+            >
+              <img src={contact.avatar} alt={contact.displayName} className="contact-avatar" />
+              <div className="contact-info">
+                <div className="contact-name">{contact.displayName}</div>
+                <div className="contact-status">En ligne</div>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
         <div className="chat-area">
           <div className="chat-header">
-            <img
-              src={profilefemmenage}
-              alt="Réceptionniste"
-              className="chat-avatar"
-            />
             <div className="chat-info">
-              <div className="chat-name">Réceptionniste</div>
-              <div className="contact-status">Actif maintenant</div>
+              <div className="chat-name">{contacts.find((c) => c.name === selectedContact)?.displayName}</div>
+              <div className="chat-status">En ligne</div>
             </div>
           </div>
           <div className="chat-messages">
             {messages
               .filter(
                 (msg) =>
-                  (msg.sender === "User" && msg.recipient === selectedContact) ||
-                  (msg.sender === selectedContact && msg.recipient === "User")
+                  (msg.sender === "Housekeeper" && msg.recipient === selectedContact) ||
+                  (msg.sender === selectedContact && msg.recipient === "Housekeeper")
               )
               .map((msg) => (
                 <div
                   key={msg.id}
                   className={`message ${
-                    msg.sender === "User" ? "message-outgoing" : "message-incoming"
+                    msg.sender === "Housekeeper" ? "message-outgoing" : "message-incoming"
                   }`}
                 >
                   <div className="message-bubble">
-                    {msg.content}
+                    <p>{msg.content}</p>
                     <div className="message-timestamp">{msg.timestamp}</div>
+                    {msg.sender === "Housekeeper" && (
+                      <div className="message-actions">
+                        <button className="action-button" onClick={() => openEditModal(msg)}>
+                          <FaEdit />
+                        </button>
+                        <button
+                          className="action-button"
+                          onClick={() => handleDeleteMessage(msg.id)}
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -474,20 +572,42 @@ const MessageSection = ({ messages, newMessage, setNewMessage, addMessage }) => 
           </div>
           <div className="chat-input">
             <textarea
-              placeholder="Tapez un message"
+              className="message-input"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="input message-input"
+              placeholder="Écrivez votre message..."
               rows="1"
             />
-            <button className="button send-button" onClick={addMessage}>
-              Envoyer
+            <button className="send-button" onClick={addMessage}>
+              <FaPaperPlane /> Envoyer
             </button>
           </div>
         </div>
       </div>
-    </section>
+      {editingMessage && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Modifier le message</h3>
+            <textarea
+              className="message-input"
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              placeholder="Modifier votre message..."
+              rows="4"
+            />
+            <div className="modal-actions">
+              <button className="btn" onClick={() => handleEditMessage(editingMessage)}>
+                Enregistrer
+              </button>
+              <button className="btn secondary" onClick={closeEditModal}>
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-no-undef */
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
+import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import { 
   FaCheckCircle, 
@@ -14,6 +15,9 @@ import {
   FaChartBar,
   FaCoins, 
   FaComments,
+  FaEdit,
+  FaTrash,
+  FaPaperPlane,
 } from "react-icons/fa";
 import profilereceptioniste from "../assets/profilereceptioniste.webp";
 import admin from "../assets/admin.jpg";
@@ -96,8 +100,6 @@ const HomeDashboard = () => {
             </tbody>
           </table>
         </div>
-
-        
       </div>
     </div>
   );
@@ -668,7 +670,7 @@ const CreateReservation = () => {
           </div>
         )}
 
-{step === 3 && (
+        {step === 3 && (
           <div className="form-step">
             <h3>Étape 3: Services additionnels</h3>
             <div className="form-group">
@@ -732,14 +734,14 @@ const CreateReservation = () => {
                   />
                 </div>
                 <div className="form-group">
-              <label>Date d'expiration</label>
-              <input
-                type="date"
-                name="checkInDate"
-                value={reservation.checkInDate}
-                onChange={handleChange}
-                required
-              />
+                  <label>Date d'expiration</label>
+                  <input
+                    type="date"
+                    name="checkInDate"
+                    value={reservation.checkInDate}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
                 <div className="form-group">
                   <label>Cryptogramme visuel (CVV)</label>
@@ -774,7 +776,7 @@ const CreateReservation = () => {
       {message && <p className="message success">{message}</p>}
     </div>
   );
-}
+};
 
 // Composant GuestDeparture
 const GuestDeparture = () => {
@@ -898,6 +900,7 @@ const GuestDeparture = () => {
   );
 };
 
+// Composant RoomManagement
 const RoomManagement = () => {
   const [rooms, setRooms] = useState([
     {
@@ -910,7 +913,7 @@ const RoomManagement = () => {
       price: 100,
       checkInDate: "",
       checkOutDate: "",
-      image: room1001, // Utiliser l'image locale
+      image: room1001,
     },
     {
       id: 2,
@@ -922,7 +925,7 @@ const RoomManagement = () => {
       price: 150,
       checkInDate: "2023-10-25",
       checkOutDate: "2023-10-30",
-      image: room1002, // Utiliser l'image locale
+      image: room1002,
     },
     {
       id: 3,
@@ -934,7 +937,7 @@ const RoomManagement = () => {
       price: 200,
       checkInDate: "",
       checkOutDate: "",
-      image: room1003, // Utiliser l'image locale
+      image: room1003,
     },
     {
       id: 4,
@@ -946,7 +949,7 @@ const RoomManagement = () => {
       price: 250,
       checkInDate: "",
       checkOutDate: "",
-      image: room1004, // Utiliser l'image locale
+      image: room1004,
     },
     {
       id: 5,
@@ -958,7 +961,7 @@ const RoomManagement = () => {
       price: 200,
       checkInDate: "2023-11-01",
       checkOutDate: "2023-11-05",
-      image: room1005, // Utiliser l'image locale
+      image: room1005,
     },
     {
       id: 6,
@@ -970,7 +973,7 @@ const RoomManagement = () => {
       price: 250,
       checkInDate: "2023-10-20",
       checkOutDate: "2023-10-25",
-      image: room1006, // Utiliser l'image locale
+      image: room1006,
     },
     {
       id: 7,
@@ -982,7 +985,7 @@ const RoomManagement = () => {
       price: 150,
       checkInDate: "",
       checkOutDate: "",
-      image: room1007, // Utiliser l'image locale
+      image: room1007,
     },
     {
       id: 8,
@@ -994,7 +997,7 @@ const RoomManagement = () => {
       price: 100,
       checkInDate: "",
       checkOutDate: "",
-      image: room1008, // Utiliser l'image locale
+      image: room1008,
     },
     {
       id: 9,
@@ -1006,21 +1009,19 @@ const RoomManagement = () => {
       price: 200,
       checkInDate: "2023-11-10",
       checkOutDate: "2023-11-15",
-      image: room1009, // Utiliser l'image locale
+      image: room1009,
     },
   ]);
 
   const [filter, setFilter] = useState("all");
   const [floorFilter, setFloorFilter] = useState("all");
 
-  // Filtrer les chambres en fonction du statut et de l'étage
   const filteredRooms = rooms.filter((room) => {
     const statusMatch = filter === "all" || room.status === filter;
     const floorMatch = floorFilter === "all" || room.floor === floorFilter;
     return statusMatch && floorMatch;
   });
 
-  // Modifier le statut d'une chambre
   const changeRoomStatus = (id, newStatus, checkInDate = "", checkOutDate = "") => {
     setRooms(
       rooms.map((room) =>
@@ -1035,7 +1036,6 @@ const RoomManagement = () => {
     <div className="container room-management">
       <h2>Gestion des Chambres</h2>
 
-      {/* Filtres */}
       <div className="filters">
         <div className="form-group">
           <label>Filtrer par statut:</label>
@@ -1065,7 +1065,6 @@ const RoomManagement = () => {
         </div>
       </div>
 
-      {/* Tableau des chambres */}
       <table className="room-table">
         <thead>
           <tr>
@@ -1154,6 +1153,7 @@ const RoomManagement = () => {
   );
 };
 
+// Composant AdministrativeTasks
 const AdministrativeTasks = () => {
   const [tasks, setTasks] = useState([
     { id: 1, name: "Vérifier les réservations en ligne", done: false, category: "Réservations", priority: "moyenne" },
@@ -1162,7 +1162,6 @@ const AdministrativeTasks = () => {
     { id: 4, name: "Coordonner avec le service de ménage", done: false, category: "Ménage", priority: "moyenne" },
     { id: 5, name: "Vérifier les stocks mini-bar", done: false, category: "Stocks", priority: "haute" },
     { id: 6, name: "Planifier les maintenances", done: false, category: "Maintenance", priority: "moyenne" },
-    // Nouvelles tâches ajoutées
     { id: 7, name: "Gérer les plaintes clients", done: false, category: "Assistance client", priority: "haute" },
     { id: 8, name: "Vérifier les équipements", done: false, category: "Maintenance", priority: "moyenne" },
     { id: 9, name: "Coordonner avec le service restauration", done: false, category: "Réservations", priority: "basse" },
@@ -1175,14 +1174,12 @@ const AdministrativeTasks = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
 
-  // Toggle task status (done/undone)
   const toggleTask = (id) => {
     setTasks(tasks.map(task => 
       task.id === id ? { ...task, done: !task.done } : task
     ));
   };
 
-  // Add a new task
   const addTask = () => {
     if (newTask.trim()) {
       setTasks([...tasks, {
@@ -1195,6 +1192,7 @@ const AdministrativeTasks = () => {
       setNewTask("");
     }
   };
+
   const filteredTasks = tasks.filter(task => {
     const categoryMatch = categoryFilter === "all" || task.category === categoryFilter;
     const priorityMatch = priorityFilter === "all" || task.priority === priorityFilter;
@@ -1259,119 +1257,216 @@ const AdministrativeTasks = () => {
   );
 };
 
-// Composant pour la gestion des conversations (Réceptionniste <-> Administrateur)
+// Composant pour la gestion des conversations (Réceptionniste <-> Admin, Accountant)
 const Conversation = () => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: "Admin",
-      content: "Bonjour, comment puis-je vous aider aujourd'hui?",
-      timestamp: "10:30 AM",
-      incoming: true
-    },
-    {
-      id: 2,
-      sender: "FemmeDeMenage",
-      content: "J'ai terminé le ménage de la chambre 101.",
-      timestamp: "10:45 AM",
-      incoming: true
-    }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [selectedContact, setSelectedContact] = useState("Admin");
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [editingMessage, setEditingMessage] = useState(null);
+  const [editContent, setEditContent] = useState("");
+  const chatEndRef = useRef(null);
 
-  const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      const message = {
-        id: Date.now(),
-        sender: "Receptionist",
-        content: newMessage,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        incoming: false
-      };
-      setMessages([...messages, message]);
+  const contacts = [
+    { name: "Admin", displayName: "Lucas Bernard", avatar: admin },
+    { name: "Accountant", displayName: "Thomas Moreau", avatar: compatible },
+  ];
+
+  const allowedCommunications = {
+    Receptionist: ["Admin", "Accountant"],
+  };
+
+  const fetchMessages = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/messages/user/Receptionist`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
+      });
+      const filteredMessages = response.data.filter(
+        msg =>
+          (msg.sender === "Receptionist" && allowedCommunications["Receptionist"].includes(msg.recipient)) ||
+          (msg.recipient === "Receptionist" && allowedCommunications["Receptionist"].includes(msg.sender))
+      );
+      setMessages(filteredMessages.map(msg => ({
+        id: msg.id,
+        sender: msg.senderName || msg.sender,
+        recipient: msg.recipientName || msg.recipient,
+        content: msg.content,
+        timestamp: msg.timestamp
+      })));
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      setError("Impossible de charger les messages. Veuillez réessayer.");
+    }
+  };
+
+  useEffect(() => {
+    fetchMessages();
+    const interval = setInterval(fetchMessages, 3000);
+    return () => clearInterval(interval);
+  }, [selectedContact]);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const displaySuccessMessage = (message) => {
+    setSuccessMessage(message);
+    setTimeout(() => setSuccessMessage(null), 3000);
+  };
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim()) {
+      setError("Veuillez entrer un message.");
+      return;
+    }
+
+    const message = {
+      sender: "Receptionist",
+      recipient: selectedContact,
+      content: newMessage,
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      senderName: "Paul Hugo",
+      recipientName: contacts.find(c => c.name === selectedContact)?.displayName
+    };
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/messages", message, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
+      });
+      setMessages([...messages, response.data]);
       setNewMessage("");
+      setError(null);
+      displaySuccessMessage("Message envoyé avec succès !");
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setError("Erreur lors de l'envoi du message.");
+    }
+  };
 
-      // Simuler une réponse automatique du destinataire après 2 secondes
-      setTimeout(() => {
-        const response = {
-          id: Date.now() + 1,
-          sender: selectedContact,
-          content: `Votre message a été reçu. Nous traiterons cela rapidement.`,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          incoming: true
-        };
-        setMessages((prev) => [...prev, response]);
-      }, 2000);
+  const handleEditMessage = async (messageId) => {
+    if (!editContent.trim()) {
+      setError("Le message modifié ne peut pas être vide.");
+      return;
+    }
+
+    try {
+      await axios.put(
+        `http://localhost:5000/api/messages/${messageId}`,
+        { content: editContent },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
+        }
+      );
+      setEditingMessage(null);
+      setEditContent("");
+      displaySuccessMessage("Message modifié avec succès !");
+      fetchMessages();
+    } catch (error) {
+      console.error("Error editing message:", error);
+      setError("Erreur lors de la modification du message.");
+    }
+  };
+
+  const handleDeleteMessage = async (messageId) => {
+    if (!window.confirm("Voulez-vous vraiment supprimer ce message ?")) return;
+
+    try {
+      await axios.delete(`http://localhost:5000/api/messages/${messageId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
+      });
+      displaySuccessMessage("Message supprimé avec succès !");
+      fetchMessages();
+    } catch (error) {
+      console.error("Error deleting message:", error);
+      setError("Erreur lors de la suppression du message.");
+    }
+  };
+
+  const openEditModal = (msg) => {
+    setEditingMessage(msg.id);
+    setEditContent(msg.content);
+  };
+
+  const closeEditModal = () => {
+    setEditingMessage(null);
+    setEditContent("");
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
     }
   };
 
   return (
     <div className="chat-section">
+      {error && <p className="message error">{error}</p>}
+      {successMessage && <p className="message success">{successMessage}</p>}
       <div className="chat-container">
         <div className="contact-list">
-          <div
-            className={`contact ${selectedContact === "Admin" ? "active" : ""}`}
-            onClick={() => setSelectedContact("Admin")}
-          >
-            <img src={admin} alt="Admin" className="contact-avatar" />
-            <div className="contact-info">
-              <div className="contact-name">Lucas Bernard</div>
-              <div className="contact-status">En ligne</div>
+          {contacts.map((contact) => (
+            <div
+              key={contact.name}
+              className={`contact ${selectedContact === contact.name ? "active" : ""}`}
+              onClick={() => setSelectedContact(contact.name)}
+            >
+              <img src={contact.avatar} alt={contact.displayName} className="contact-avatar" />
+              <div className="contact-info">
+                <div className="contact-name">{contact.displayName}</div>
+                <div className="contact-status">En ligne</div>
+              </div>
             </div>
-          </div>
-          <div
-            className={`contact ${selectedContact === "Responsable de service de menage" ? "active" : ""}`}
-            onClick={() => setSelectedContact("Responsable de service de menage")}
-          >
-
-             <img src={menage} alt="Admin" className="contact-avatar" />
-
-             <div className="contact-info">
-              <div className="contact-name">Nadia Slimani</div>
-              <div className="contact-status">En ligne</div>
-            </div>
-          </div>
-          <div
-            className={`contact ${selectedContact === "Responsable de service compatible" ? "active" : ""}`}
-            onClick={() => setSelectedContact("Responsable de service compatible")}
-          >
-            <img src={compatible} alt="Admin" className="contact-avatar" />
-
-            <div className="contact-info">
-              <div className="contact-name">Thomas Moreau</div>
-              <div className="contact-status">En ligne</div>
-            </div>
-          </div>
-          {/* Ajoutez d'autres contacts ici */}
+          ))}
         </div>
         
         <div className="chat-area">
           <div className="chat-header">
-            
             <div className="chat-info">
-              <div className="chat-name">
-                {selectedContact === "Admin" 
-                  ? "Administrateur" 
-                  : selectedContact === "Responsable de service de menage" 
-                    ? "Responsable de service de menage" 
-                    : "Responsable de service compatible"}
-              </div>
+              <div className="chat-name">{contacts.find(c => c.name === selectedContact)?.displayName}</div>
               <div className="chat-status">En ligne</div>
             </div>
           </div>
           
           <div className="chat-messages">
             {messages
-              .filter(msg => msg.sender === selectedContact || msg.incoming === false)
+              .filter(
+                (msg) =>
+                  (msg.sender === "Receptionist" && msg.recipient === selectedContact) ||
+                  (msg.sender === selectedContact && msg.recipient === "Receptionist")
+              )
               .map((msg) => (
-              <div key={msg.id} className={`message ${msg.incoming ? 'message-incoming' : 'message-outgoing'}`}>
-                <div className="message-bubble">
-                  <p>{msg.content}</p>
-                  <div className="message-timestamp">{msg.timestamp}</div>
+                <div
+                  key={msg.id}
+                  className={`message ${
+                    msg.sender === "Receptionist" ? "message-outgoing" : "message-incoming"
+                  }`}
+                >
+                  <div className="message-bubble">
+                    <p>{msg.content}</p>
+                    <div className="message-timestamp">{msg.timestamp}</div>
+                    {msg.sender === "Receptionist" && (
+                      <div className="message-actions">
+                        <button
+                          className="action-button"
+                          onClick={() => openEditModal(msg)}
+                        >
+                          <FaEdit />
+                        </button>
+                        <button
+                          className="action-button"
+                          onClick={() => handleDeleteMessage(msg.id)}
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            <div ref={chatEndRef} />
           </div>
           
           <div className="chat-input">
@@ -1379,15 +1474,38 @@ const Conversation = () => {
               className="message-input"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
               placeholder="Écrivez votre message..."
               rows="1"
             />
             <button className="send-button" onClick={handleSendMessage}>
-              Envoyer
+              <FaPaperPlane /> Envoyer
             </button>
           </div>
         </div>
       </div>
+      {editingMessage && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Modifier le message</h3>
+            <textarea
+              className="message-input"
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              placeholder="Modifier votre message..."
+              rows="4"
+            />
+            <div className="modal-actions">
+              <button className="btn" onClick={() => handleEditMessage(editingMessage)}>
+                Enregistrer
+              </button>
+              <button className="btn secondary" onClick={closeEditModal}>
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
